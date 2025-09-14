@@ -7,3 +7,5 @@ export RUSTUP_TOOLCHAIN=stable
 [ -f "$HOME/.zsh_aliases" ] &&  . "$HOME/.zsh_aliases"
 [ -f "$HOME/.cargo/env" ] &&    . "$HOME/.cargo/env"
 [ -d "$HOME/bin" ] &&           PATH="$HOME/bin:$PATH"
+[ -d "$HOME/.cargo/bin" ] &&    PATH="$HOME/.cargo/bin:$PATH"
+[ -d "$HOME/go/bin" ] &&        PATH="$HOME/go/bin:$PATH"
