@@ -4,7 +4,7 @@ case $- in
     *i*) ;;
       *) return;;
 esac
-
+export EDITOR=/usr/bin/nvim
 
 ###########
 #   Zsh   #
