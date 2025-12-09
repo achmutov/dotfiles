@@ -70,7 +70,8 @@ go:
 
 node:
     npm i -g \
-        pnpm
+        pnpm \
+        serve
 
 lua:
     luarocks install --local \
