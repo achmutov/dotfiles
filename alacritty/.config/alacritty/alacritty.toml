@@ -1,5 +1,5 @@
 [general]
-import = ["~/.config/alacritty/themes/gruvbox-dark.toml"]
+import = ["themes/gruvbox-dark.toml"]
 
 [terminal]
 shell = "zsh"
@@ -19,5 +19,5 @@ size = 12
 family = "JetBrainsMono Nerd Font"
 
 [scrolling]
-history = 10000
+history = 100000
 multiplier = 3
