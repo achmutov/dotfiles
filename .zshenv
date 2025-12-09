@@ -37,6 +37,9 @@ add_to_ld_library_path "$HOME/.local/lib"
 # python
 export NTLK_DATA="$HOME/.local/state/ntlk_data"
 
+# lua
+add_to_path "$HOME/.luarocks/bin"
+
 # rust
 export RUSTUP_TOOLCHAIN=stable
 add_to_path      "$HOME/.cargo/bin"
