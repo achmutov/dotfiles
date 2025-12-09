@@ -50,3 +50,6 @@ add_to_path "$GOPATH/bin"
 export NVM_DIR="$HOME/.nvm"
 source_if_exists "$NVM_DIR/nvm.sh"
 source_if_exists "$NVM_DIR/bash_completion"
+
+# zephyr
+export ZEPHYR_SDK_INSTALL_DIR="$HOME/.local"
