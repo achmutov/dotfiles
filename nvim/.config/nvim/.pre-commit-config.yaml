@@ -1,0 +1,19 @@
+exclude: (.*/thirdparty/.*)
+
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: trailing-whitespace
+- repo: https://github.com/Calinou/pre-commit-luacheck
+  rev: v1.0.0
+  hooks:
+    - id: luacheck
+- repo: https://github.com/JohnnyMorganz/StyLua
+  rev: v2.0.2
+  hooks:
+    - id: stylua
+- repo: https://github.com/crate-ci/typos
+  rev: v1.16.23
+  hooks:
+    - id: typos
