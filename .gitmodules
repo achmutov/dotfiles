@@ -1,6 +1,6 @@
 [submodule "awesome-wm-widgets"]
-	path = awesome-wm-widgets
+	path = awesome/.config/awesome/awesome-wm-widgets
 	url = https://github.com/streetturtle/awesome-wm-widgets
 [submodule "awesomewm-screenshot"]
-	path = awesomewm-screenshot
+	path = awesome/.config/awesome/awesomewm-screenshot
 	url = https://github.com/denisoster/awesomewm-screenshot
