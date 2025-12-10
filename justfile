@@ -55,12 +55,12 @@ zsh-clean:
 ########
 
 rust:
+    cargo install ripgrep --features pcre2 
     cargo install \
         alacritty \
         cargo-expand \
         fd-find \
         just \
-        ripgrep \
         uv \
         yazi-build
 
