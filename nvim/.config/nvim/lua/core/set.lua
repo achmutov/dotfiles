@@ -3,24 +3,22 @@ vim.opt.nu = true
 vim.opt.relativenumber = true
 
 -- Tabs and indent --
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
+
+function SetIndent(val)
+    vim.opt.tabstop = val
+    vim.opt.softtabstop = val
+    vim.opt.shiftwidth = val
+end
+
+function SetIndentLocal(val)
+    vim.opt_local.tabstop = val
+    vim.opt_local.softtabstop = val
+    vim.opt_local.shiftwidth = val
+end
+
+SetIndent(4)
 vim.opt.expandtab = true
 vim.opt.smartindent = true
-
--- Two tab indentation
-local two_space_filetypes = { "r", "javascript", "ts", "typescriptreact", "html", "css", "rmd", "nix" }
-local indent_group = vim.api.nvim_create_augroup("IndentationSettings", { clear = true })
-vim.api.nvim_create_autocmd({ "FileType" }, {
-    group = indent_group,
-    pattern = two_space_filetypes,
-    callback = function()
-        vim.opt_local.shiftwidth = 2
-        vim.opt_local.tabstop = 2
-        vim.opt_local.softtabstop = 2
-    end,
-})
 
 -- Persistence
 vim.opt.swapfile = false
