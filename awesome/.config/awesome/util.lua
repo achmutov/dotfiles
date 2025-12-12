@@ -2,7 +2,7 @@ local beautiful = require("beautiful")
 local gears = require("gears")
 
 return {
-    set_wallpaper = function (s)
+    set_wallpaper = function(s)
         if beautiful.wallpaper then
             local wallpaper = beautiful.wallpaper
             -- If wallpaper is a function, call it with the screen
@@ -11,5 +11,5 @@ return {
             end
             gears.wallpaper.maximized(wallpaper, s, true)
         end
-    end
+    end,
 }

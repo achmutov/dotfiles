@@ -26,7 +26,7 @@ source_if_exists() {
 }
 
 # zsh
-source_if_exists "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" 
+source_if_exists "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 source_if_exists "$HOME/.zsh_aliases"
 
 # general

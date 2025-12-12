@@ -1,10 +1,7 @@
----@diagnostic disable: lowercase-global
-terminal = "alacritty"
-editor = "nvim"
-editor_cmd = terminal .. " -e " .. editor
-modkey = "Mod4"
-
 return {
+    terminal = "alacritty",
+    editor = "nvim",
+    modkey = "Mod4",
     themes_path = "~/.config/awesome/",
     theme = "default",
 }
