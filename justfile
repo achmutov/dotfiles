@@ -55,7 +55,7 @@ zsh-clean:
 ########
 
 rust:
-    cargo install ripgrep --features pcre2 
+    cargo install ripgrep --features pcre2
     cargo install \
         alacritty \
         cargo-expand \
