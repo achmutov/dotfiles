@@ -34,6 +34,9 @@ vim.keymap.set("n", "<leader>mk", ":silent! make<CR>")
 vim.keymap.set("n", "<leader>te", ":!")
 vim.keymap.set("n", "<leader>c", ":!pre-commit run --all-files<CR>")
 
+vim.keymap.set("v", ">", ">gv", { noremap = true })
+vim.keymap.set("v", "<", "<gv", { noremap = true })
+
 vim.keymap.set("v", "<leader>\\", function()
     require("math")
 
