@@ -13,10 +13,15 @@ require("mason").setup({
 require("mason-lspconfig").setup({
     ensure_installed = {
         "clangd",
+        "docker_compose_language_service",
+        "docker_language_server",
+        "just",
         "lua_ls",
         "pyright",
         "ruff",
-        "rust_analyzer@2024-10-14",
+        "rust_analyzer",
+        "vue_ls",
+        "zls",
     },
 })
 
