@@ -27,6 +27,7 @@ require("neo-tree").setup({
             ["P"] = { "toggle_preview", config = { use_float = false } },
             ["o"] = "system_open",
             ["Z"] = "expand_all_nodes",
+            ["x"] = "expand_all_sibling_nodes",
         },
     },
     commands = {
@@ -42,6 +43,7 @@ require("neo-tree").setup({
             ignore = { "pylsp" },
         },
     },
+    log_level = "error",
 })
 
 vim.keymap.set("n", "<leader>pv", ":Neotree toggle<CR>")
