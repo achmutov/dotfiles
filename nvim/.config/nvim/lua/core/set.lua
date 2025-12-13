@@ -71,3 +71,44 @@ vim.filetype.add({
 })
 
 vim.opt.exrc = true
+
+--- https://github.com/nvim-treesitter/nvim-treesitter/issues/1167#issuecomment-920824125
+---@param fallback function
+local function jsdoc_indent(fallback)
+    local line = vim.fn.getline(vim.v.lnum)
+    local prev_line = vim.fn.getline(vim.v.lnum - 1)
+    if line:match("^%s*[%*/]%s*") then
+        if prev_line:match("^%s*%*%s*") then
+            return vim.fn.indent(vim.v.lnum - 1)
+        end
+        if prev_line:match("^%s*/%*%*%s*$") then
+            return vim.fn.indent(vim.v.lnum - 1) + 1
+        end
+    end
+
+    return fallback()
+end
+
+function _G.XGetJavascriptIndent()
+    return jsdoc_indent(vim.fn.GetJavascriptIndent)
+end
+
+function _G.XGetTypescriptIndent()
+    return jsdoc_indent(vim.fn.GetTypescriptIndent)
+end
+
+-- ftplugin does not cover it
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "javascript",
+    callback = function()
+        vim.bo.indentexpr = "v:lua.XGetJavascriptIndent"
+    end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "typescript",
+    callback = function()
+        vim.bo.indentexpr = "v:lua.XGetTypescriptIndent"
+    end,
+})
