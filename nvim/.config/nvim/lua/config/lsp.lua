@@ -33,6 +33,17 @@ local function nodeSystemOrMason(name, node_module)
     end
 end
 
+local inlayHints = {
+    includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all'
+    includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+    includeInlayFunctionParameterTypeHints = true,
+    includeInlayVariableTypeHints = true,
+    includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+    includeInlayPropertyDeclarationTypeHints = true,
+    includeInlayFunctionLikeReturnTypeHints = true,
+    includeInlayEnumMemberValueHints = true,
+}
+
 vim.lsp.config("ts_ls", {
     init_options = {
         plugins = {
@@ -44,6 +55,14 @@ vim.lsp.config("ts_ls", {
         },
     },
     filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
+    settings = {
+        typescript = {
+            inlayHints = inlayHints,
+        },
+        javascript = {
+            inlayHints = inlayHints,
+        },
+    },
 })
 
 vim.lsp.config("gh_actions_ls", {
