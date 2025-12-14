@@ -1,5 +1,3 @@
-local util = require("lspconfig.util")
-
 require("fidget").setup({
     notification = {
         window = {
@@ -15,6 +13,7 @@ require("mason-lspconfig").setup({
         "clangd",
         "docker_compose_language_service",
         "docker_language_server",
+        "gh_actions_ls",
         "just",
         "lua_ls",
         "pyright",
@@ -68,7 +67,7 @@ vim.lsp.config("ts_ls", {
 
 vim.lsp.config("gh_actions_ls", {
     filetypes = { "yaml.github" },
-    root_dir = util.root_pattern(".github"),
+    root_markers = { ".github" },
     single_file_support = true,
     capabilities = {
         workspace = {
