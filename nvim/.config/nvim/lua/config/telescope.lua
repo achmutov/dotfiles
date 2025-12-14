@@ -28,6 +28,9 @@ vim.keymap.set("v", "<leader>w", builtin.grep_string, {})
 
 -- LSP
 vim.keymap.set("n", "<leader>vh", builtin.help_tags, {})
+vim.keymap.set("n", "gd", builtin.lsp_definitions, {})
+vim.keymap.set("n", "gf", builtin.lsp_type_definitions, {})
+vim.keymap.set("n", "gs", builtin.lsp_workspace_symbols, {})
 vim.keymap.set("n", "<leader>vrr", builtin.lsp_references, {})
 vim.keymap.set("n", "<leader>vri", builtin.lsp_implementations, {})
 vim.keymap.set("n", "<leader>vi", builtin.diagnostics, {})
