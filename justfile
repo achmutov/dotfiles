@@ -25,7 +25,11 @@ clone-or-pull REPO DIR:
 ########
 
 nvim:
-    nvim --headless "+Lazy! sync" +qa
+    nvim --headless    \
+        "+Lazy! sync"  \
+        "+MasonUpdate" \
+        "+TSUpdate"    \
+        +qa
 
 ########
 # TMUX #
@@ -56,12 +60,12 @@ zsh-clean:
 
 rust:
     cargo install ripgrep --features pcre2
-    cargo install \
-        alacritty \
+    cargo install    \
+        alacritty    \
         cargo-expand \
-        fd-find \
-        just \
-        uv \
+        fd-find      \
+        just         \
+        uv           \
         yazi-build
 
 go:
