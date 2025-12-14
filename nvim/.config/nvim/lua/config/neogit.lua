@@ -1,8 +1,10 @@
 local neogit = require("neogit")
+
 neogit.setup({
     disable_hint = true,
     disable_context_highlighting = true,
     graph_style = "unicode",
+    process_spinner = true,
     highlight = {
         bg1 = "",
     },
