@@ -2,6 +2,8 @@
 vim.opt.nu = true
 vim.opt.relativenumber = true
 
+vim.opt.winborder = "bold"
+
 -- Tabs and indent --
 
 function SetIndent(val)
