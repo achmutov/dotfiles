@@ -52,3 +52,5 @@ require("neo-tree").setup({
 
 vim.keymap.set("n", "<leader>pv", ":Neotree toggle<CR>")
 vim.keymap.set("n", "<leader>pd", ":Neotree document_symbols toggle<CR>")
+
+vim.api.nvim_set_hl(0, require("neo-tree.ui.highlights").PREVIEW, { link = "Visual" })
