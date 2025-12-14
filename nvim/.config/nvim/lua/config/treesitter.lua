@@ -1,34 +1,65 @@
----@diagnostic disable: missing-fields
+local treesitter = require("nvim-treesitter")
+local parsers = {
+    "asm",
+    "bash",
+    "c",
+    "c_sharp",
+    "cmake",
+    "cpp",
+    "css",
+    "devicetree",
+    "diff",
+    "git_commit",
+    "git_config",
+    "git_rebase",
+    "gitattributes",
+    "gitcommit",
+    "gitignore",
+    "go",
+    "gomod",
+    "gosum",
+    "html",
+    "java",
+    "javascript",
+    "jsdoc",
+    "json",
+    "just",
+    "kconfig",
+    "kotlin",
+    "latex",
+    "lua",
+    "make",
+    "markdown",
+    "nasm",
+    "nginx",
+    "python",
+    "r",
+    "requirements",
+    "robot",
+    "ron",
+    "rst",
+    "rust",
+    "scss",
+    "ssh_config",
+    "svelte",
+    "tmux",
+    "toml",
+    "tsx",
+    "typescript",
+    "vim",
+    "vue",
+    "xml",
+    "yaml",
+    "zig",
+    "zsh",
+}
 
----@diagnostic disable-next-line: unused-local
-local function big_file(_lang, buf)
-    local max_filesize = 100 * 1024 -- 100 KB
+treesitter.setup()
+treesitter.install(parsers)
 
-    ---@diagnostic disable-next-line: undefined-field
-    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-    if ok and stats and stats.size > max_filesize then
-        return true
-    end
-end
-
-require("nvim-treesitter.configs").setup({
-    ensure_installed = {
-        "c",
-        "cpp",
-        "python",
-        "rust",
-        "lua",
-        "latex",
-        "jsdoc",
-    },
-    sync_install = false,
-    auto_install = true,
-    highlight = {
-        enable = true,
-
-        -- Disable for big files
-        disable = big_file,
-
-        additional_vim_regex_highlighting = false,
-    },
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = parsers,
+    callback = function()
+        vim.treesitter.start()
+    end,
 })
