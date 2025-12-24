@@ -1,9 +1,11 @@
 stow:
-    stow -t ~ \
+    stow -t ~     \
         alacritty \
-        awesome \
-        nvim \
-        tmux \
+        awesome   \
+        nvim      \
+        tmux      \
+        trippy    \
+        zathura   \
         zsh
 
 install: nvim tmux zsh
@@ -59,18 +61,20 @@ zsh-clean:
 ########
 
 rust:
-    cargo install ripgrep --features pcre2
-    cargo install    \
-        alacritty    \
-        cargo-expand \
-        fd-find      \
-        just         \
-        uv           \
+    cargo install --locked ripgrep --features pcre2
+    cargo install --locked \
+        alacritty          \
+        cargo-expand       \
+        fd-find            \
+        just               \
+        trippy             \
+        uv                 \
         yazi-build
+    # sudo setcap CAP_NET_RAW+p $(which trip)
 
 go:
-    go install \
-        github.com/boyter/scc/v3@latest
+    go install github.com/boyter/scc/v3@latest
+    go install github.com/karol-broda/snitch@latest
 
 node:
     npm i -g \
