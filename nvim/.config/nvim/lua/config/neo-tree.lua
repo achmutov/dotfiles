@@ -31,7 +31,7 @@ require("neo-tree").setup({
             ["P"] = { "toggle_preview", config = { use_float = false } },
             ["o"] = "system_open",
             ["Z"] = "expand_all_nodes",
-            ["x"] = "expand_all_sibling_nodes",
+            ["X"] = "expand_all_sibling_nodes",
         },
     },
     commands = {
