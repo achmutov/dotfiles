@@ -1,38 +1,3 @@
-require("fidget").setup({
-    notification = {
-        window = {
-            winblend = 0,
-        },
-    },
-})
-require("mason").setup({
-    PATH = "append",
-})
-require("mason-lspconfig").setup({
-    ensure_installed = {
-        "clangd",
-        "docker_compose_language_service",
-        "docker_language_server",
-        "gh_actions_ls",
-        "just",
-        "lua_ls",
-        "pyright",
-        "ruff",
-        "rust_analyzer",
-        "vue_ls",
-        "zls",
-    },
-})
-
-local function nodeSystemOrMason(name, node_module)
-    local exepath = vim.fn.exepath(name)
-    if string.find(exepath, "mason") then
-        return vim.fn.expand("$MASON/packages/" .. name .. "/node_modules/" .. node_module)
-    else
-        return vim.fs.dirname(vim.fs.dirname(exepath)) .. "/lib/node_modules/" .. node_module
-    end
-end
-
 local inlayHints = {
     includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all'
     includeInlayParameterNameHintsWhenArgumentMatchesName = true,
@@ -43,68 +8,36 @@ local inlayHints = {
     includeInlayFunctionLikeReturnTypeHints = true,
     includeInlayEnumMemberValueHints = true,
 }
-
 vim.lsp.config("ts_ls", {
     init_options = {
         plugins = {
             {
                 name = "@vue/typescript-plugin",
-                location = nodeSystemOrMason("vue-language-server", "@vue/language-server"),
+                location = vim.fn.expand("$MASON/packages/vue-language-server/node_modules/@vue/language-server"),
                 languages = { "vue" },
             },
         },
     },
     filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
     settings = {
-        typescript = {
-            inlayHints = inlayHints,
-        },
-        javascript = {
-            inlayHints = inlayHints,
-        },
+        typescript = { inlayHints = inlayHints },
+        javascript = { inlayHints = inlayHints },
     },
 })
-
 vim.lsp.config("gh_actions_ls", {
     filetypes = { "yaml.github" },
     root_markers = { ".github" },
     single_file_support = true,
     capabilities = {
         workspace = {
-            didChangeWorkspaceFolders = {
-                dynamicRegistration = true,
-            },
+            didChangeWorkspaceFolders = { dynamicRegistration = true },
         },
     },
 })
-
 vim.lsp.config("rust_analyzer", {
     settings = {
         ["rust-analyzer"] = {
-            check = {
-                command = "clippy",
-            },
+            check = { command = "clippy" },
         },
     },
-})
-
-vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(event)
-        local opts = { buffer = event.buf, remap = false }
-
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, opts)
-        vim.keymap.set("n", "<leader>e", vim.lsp.buf.rename, opts)
-        vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
-        vim.keymap.set("n", "<leader>c", vim.lsp.buf.code_action, opts)
-    end,
-})
-
-vim.keymap.set("n", "<leader>lsp", ":LspR<CR>")
-vim.keymap.set("n", "<leader>li", function()
-    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-end)
-
-vim.diagnostic.config({
-    virtual_text = true,
 })

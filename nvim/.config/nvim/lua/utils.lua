@@ -1,27 +1,13 @@
 local M = {}
 
 ---@param val integer
-function M.SetIndent(val)
-    vim.opt.tabstop = val
-    vim.opt.softtabstop = val
-    vim.opt.shiftwidth = val
-end
-
----@param val integer
-function M.SetIndentLocal(val)
-    vim.opt_local.tabstop = val
-    vim.opt_local.softtabstop = val
-    vim.opt_local.shiftwidth = val
-end
-
----@param val integer
 function M.toggleScrolloff(val)
     return function()
         local inf = 9999
-        if vim.o.scrolloff == inf then
-            vim.opt.scrolloff = val
+        if vim.o.so == inf then
+            vim.o.so = val
         else
-            vim.opt.scrolloff = inf
+            vim.o.so = inf
         end
     end
 end

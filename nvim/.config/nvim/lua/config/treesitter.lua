@@ -1,5 +1,4 @@
-local treesitter = require("nvim-treesitter")
-local parsers = {
+return {
     "asm",
     "bash",
     "c",
@@ -53,13 +52,3 @@ local parsers = {
     "zig",
     "zsh",
 }
-
-treesitter.setup()
-treesitter.install(parsers)
-
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = parsers,
-    callback = function()
-        vim.treesitter.start()
-    end,
-})
