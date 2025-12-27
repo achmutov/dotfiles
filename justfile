@@ -27,10 +27,12 @@ clone-or-pull REPO DIR:
 ########
 
 nvim:
-    nvim --headless    \
-        "+Lazy! sync"  \
-        "+MasonUpdate" \
-        "+TSUpdate"    \
+    nvim --headless        \
+        "+Lazy! restore"   \
+        "+MasonUpdate"     \
+        "+MasonInstallAll" \
+        "+TSInstallAll"    \
+        "+TSUpdate"        \
         +qa
 
 ########
