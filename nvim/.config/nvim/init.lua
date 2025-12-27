@@ -97,13 +97,15 @@ vim.lsp.enable(config.lsp)
 
 vim.filetype.add({
     pattern = {
-        ["docker-compose%.yml"] = "yaml.docker-compose",
-        ["docker-compose%.yaml"] = "yaml.docker-compose",
-        ["compose%.yml"] = "yaml.docker-compose",
-        ["compose%.yaml"] = "yaml.docker-compose",
+        ["docker-compose%.ya?ml"] = "yaml.docker-compose",
+        ["compose%.ya?ml"] = "yaml.docker-compose",
         [".*/%.github[%w/]+workflows[%w/]+.*%.ya?ml"] = "yaml.github",
     },
 })
+local custom_ft_to_native = {
+    ["yaml.docker-compose"] = "yaml",
+    ["yaml.github"] = "yaml",
+}
 
 local function plugins()
     ---@type LazySpec
@@ -646,9 +648,10 @@ local function autocommands()
     })
 
     vim.api.nvim_create_autocmd("FileType", {
-        pattern = config.treesitter,
+        pattern = vim.list_extend(vim.tbl_keys(custom_ft_to_native), config.treesitter),
         callback = function(ev)
-            require("nvim-treesitter").install({ ev.match })
+            local name = custom_ft_to_native[ev.match] or ev.match
+            require("nvim-treesitter").install({ name })
             vim.treesitter.start()
         end,
     })
