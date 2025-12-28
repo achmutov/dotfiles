@@ -478,7 +478,6 @@ local function plugins()
             "neovim/nvim-lspconfig",
             event = "VeryLazy",
             config = function()
-                require("lsp")
                 vim.env.PATH = vim.env.PATH .. ":" .. (vim.fn.stdpath("data") .. "/mason/bin")
                 vim.lsp.enable(config.lsp)
             end,
@@ -487,6 +486,7 @@ local function plugins()
             "mason-org/mason.nvim",
             cmd = {
                 "Mason",
+                "MasonUpdate",
                 "MasonInstallAll",
             },
             config = function()

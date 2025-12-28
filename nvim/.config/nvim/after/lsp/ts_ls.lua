@@ -8,36 +8,31 @@ local inlayHints = {
     includeInlayFunctionLikeReturnTypeHints = true,
     includeInlayEnumMemberValueHints = true,
 }
-vim.lsp.config("ts_ls", {
+
+return {
     init_options = {
         plugins = {
             {
                 name = "@vue/typescript-plugin",
-                location = vim.fn.expand("$MASON/packages/vue-language-server/node_modules/@vue/language-server"),
+                location = vim.fn.stdpath("data")
+                    .. "/mason/packages/vue-language-server/node_modules/@vue/language-server",
                 languages = { "vue" },
             },
         },
     },
-    filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
+    filetypes = {
+        -- lspconfig
+        "javascript",
+        "javascriptreact",
+        "javascript.jsx",
+        "typescript",
+        "typescriptreact",
+        "typescript.tsx",
+        -- lspconfig
+        "vue",
+    },
     settings = {
         typescript = { inlayHints = inlayHints },
         javascript = { inlayHints = inlayHints },
     },
-})
-vim.lsp.config("gh_actions_ls", {
-    filetypes = { "yaml.github" },
-    root_markers = { ".github" },
-    single_file_support = true,
-    capabilities = {
-        workspace = {
-            didChangeWorkspaceFolders = { dynamicRegistration = true },
-        },
-    },
-})
-vim.lsp.config("rust_analyzer", {
-    settings = {
-        ["rust-analyzer"] = {
-            check = { command = "clippy" },
-        },
-    },
-})
+}
