@@ -93,8 +93,6 @@ vim.diagnostic.config({
     virtual_lines = { current_line = true },
 })
 
-vim.lsp.enable(config.lsp)
-
 vim.filetype.add({
     pattern = {
         ["docker-compose%.ya?ml"] = "yaml.docker-compose",
@@ -153,6 +151,7 @@ local function plugins()
         },
         {
             "nvim-treesitter/nvim-treesitter",
+            lazy = true,
             build = ":TSUpdate",
         },
     }
@@ -470,18 +469,22 @@ local function plugins()
         },
         {
             "neovim/nvim-lspconfig",
-            dependencies = {
-                "L3MON4D3/LuaSnip",
-            },
+            event = "VeryLazy",
             config = function()
                 require("lsp")
+                vim.env.PATH = vim.env.PATH .. ":" .. (vim.fn.stdpath("data") .. "/mason/bin")
+                vim.lsp.enable(config.lsp)
             end,
         },
         {
             "mason-org/mason.nvim",
+            cmd = {
+                "Mason",
+                "MasonInstallAll",
+            },
             config = function()
                 require("mason").setup({
-                    PATH = "append",
+                    PATH = "skip",
                 })
             end,
         },
