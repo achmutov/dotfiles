@@ -398,6 +398,7 @@ local function plugins()
     local cmp = {
         {
             "saghen/blink.cmp",
+            version = "1.*",
             dependencies = {
                 "rafamadriz/friendly-snippets",
                 "xzbdmw/colorful-menu.nvim",
