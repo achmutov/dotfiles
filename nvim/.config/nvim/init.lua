@@ -353,23 +353,29 @@ local function plugins()
     local misc = {
         {
             "RRethy/vim-illuminate",
+            keys = {
+                {
+                    "<leader>o",
+                    function()
+                        local illuminate = package.loaded.illuminate
+                        local engine = require("illuminate.engine")
+                        if illuminate.is_paused() then
+                            illuminate.resume()
+                        else
+                            illuminate.toggle_freeze_buf()
+                            engine.refresh_references()
+                        end
+                    end,
+                },
+            },
             config = function()
                 local illuminate = require("illuminate")
-                local engine = require("illuminate.engine")
                 illuminate.configure({ delay = 0 })
                 illuminate.pause()
                 vim.keymap.set({ "n", "i" }, "<C-l>", function()
                     illuminate.unfreeze_buf()
                     illuminate.pause()
                     vim.cmd("noh")
-                end)
-                vim.keymap.set("n", "<leader>o", function()
-                    if illuminate.is_paused() then
-                        illuminate.resume()
-                    else
-                        illuminate.toggle_freeze_buf()
-                        engine.refresh_references()
-                    end
                 end)
                 vim.api.nvim_set_hl(0, "IlluminatedWordText", { bg = "#ffffff", fg = "#000000" })
                 vim.api.nvim_set_hl(0, "IlluminatedWordRead", { bg = "#83a598", fg = "#ffffff" })
