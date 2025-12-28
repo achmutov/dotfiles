@@ -554,7 +554,7 @@ local function plugins()
 
                 dap.adapters.python = {
                     type = "executable",
-                    command = "debugpy",
+                    command = "debugpy-adapter",
                 }
 
                 dap.adapters.codelldb = {
