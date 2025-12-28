@@ -295,11 +295,10 @@ local function plugins()
         },
         {
             "sindrets/diffview.nvim",
-            config = function()
-                local diffview = require("diffview")
-                vim.keymap.set("n", "<leader>gv", diffview.open)
-                vim.keymap.set("n", "<leader>gc", diffview.close)
-            end,
+            keys = {
+                { "<leader>gv", "<cmd>DiffviewOpen<cr>" },
+                { "<leader>gc", "<cmd>DiffviewClose<cr>" },
+            },
         },
         {
             "NeogitOrg/neogit",
@@ -307,6 +306,10 @@ local function plugins()
                 "nvim-telescope/telescope.nvim",
                 "sindrets/diffview.nvim",
                 "nvim-lua/plenary.nvim",
+            },
+            cmd = "Neogit",
+            keys = {
+                { "<leader>gs", "<cmd>Neogit kind=replace<cr>" },
             },
             config = function()
                 local neogit = require("neogit")
@@ -318,9 +321,6 @@ local function plugins()
                     highlight = { bg1 = "" },
                     integrations = { telescope = true, diffview = true },
                 })
-                vim.keymap.set("n", "<leader>gs", function()
-                    neogit.open({ kind = "replace" })
-                end)
             end,
         },
         {
@@ -461,6 +461,7 @@ local function plugins()
     local lsp = {
         {
             "j-hui/fidget.nvim",
+            event = "LspAttach",
             opts = {
                 notification = {
                     window = { winblend = 0 },
