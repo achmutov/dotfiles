@@ -661,11 +661,10 @@ local function autocommands()
     })
 
     vim.api.nvim_create_autocmd("FileType", {
-        pattern = vim.list_extend(vim.tbl_keys(custom_ft_to_native), config.treesitter),
         callback = function(ev)
             local name = custom_ft_to_native[ev.match] or ev.match
-            require("nvim-treesitter").install({ name })
-            vim.treesitter.start()
+            require("nvim-treesitter").install(name)
+            pcall(vim.treesitter.start)
         end,
     })
 
