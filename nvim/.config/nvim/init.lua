@@ -120,6 +120,8 @@ local function plugins()
         },
         {
             "lukas-reineke/indent-blankline.nvim",
+            main = "ibl",
+            opts = {},
         },
         {
             "nvim-lualine/lualine.nvim",
