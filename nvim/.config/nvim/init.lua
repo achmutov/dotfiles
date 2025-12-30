@@ -272,7 +272,7 @@ local function plugins()
         },
         {
             "ruifm/gitlinker.nvim",
-            keys = "<leader>gy",
+            keys = { { "<leader>gy", mode = { "n", "v" } } },
             config = function()
                 require("gitlinker").setup({
                     callbacks = {
