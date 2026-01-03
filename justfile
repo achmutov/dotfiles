@@ -3,6 +3,7 @@ stow:
         alacritty \
         awesome   \
         nvim      \
+        scripts   \
         tmux      \
         trippy    \
         zathura   \
