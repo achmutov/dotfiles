@@ -69,6 +69,7 @@ rust:
         alacritty          \
         cargo-expand       \
         fd-find            \
+        fnm                \
         just               \
         trippy             \
         uv                 \

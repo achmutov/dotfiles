@@ -126,24 +126,27 @@ export GOPATH="$HOME/.go"
 add_to_path "$GOPATH/bin"
 
 # nvm
-export NVM_DIR="$HOME/.nvm"
-load_nvm () {
-    unset -f npm node nvm
-    source_if_exists "$NVM_DIR/nvm.sh"
-    source_if_exists "$NVM_DIR/bash_completion"
-}
-nvm () {
-    load_nvm
-    nvm $@
-}
-npm () {
-    load_nvm
-    npm $@
-}
-node () {
-    load_nvm
-    node $@
-}
+# export NVM_DIR="$HOME/.nvm"
+# load_nvm () {
+#     unset -f npm node nvm
+#     source_if_exists "$NVM_DIR/nvm.sh"
+#     source_if_exists "$NVM_DIR/bash_completion"
+# }
+# nvm () {
+#     load_nvm
+#     nvm $@
+# }
+# npm () {
+#     load_nvm
+#     npm $@
+# }
+# node () {
+#     load_nvm
+#     node $@
+# }
+
+# fnm
+[ -x "$(command -v fnm)" ] && eval "`fnm env`"
 
 # zephyr
 export ZEPHYR_SDK_INSTALL_DIR="$HOME/.local"
