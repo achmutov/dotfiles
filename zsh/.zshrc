@@ -19,6 +19,8 @@ SAVEHIST=2000
 
 zstyle ':completion:::*:default' menu no select
 
+FPATH="$HOME/.zfunc:${FPATH}"
+
 autoload -Uz compinit
 compinit
 
