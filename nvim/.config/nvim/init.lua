@@ -96,6 +96,8 @@ vim.diagnostic.config({
 vim.filetype.add({
     pattern = {
         ["docker-compose%.ya?ml"] = "yaml.docker-compose",
+        [".*%.resc"] = "resc",
+        [".*%.repl"] = "repl",
         ["compose%.ya?ml"] = "yaml.docker-compose",
         [".*/%.github[%w/]+workflows[%w/]+.*%.ya?ml"] = "yaml.github",
     },
@@ -676,6 +678,24 @@ local function autocommands()
             vim.keymap.set("n", "<leader>e", vim.lsp.buf.rename, opts)
             vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
             vim.keymap.set("n", "<leader>c", vim.lsp.buf.code_action, opts)
+        end,
+    })
+    --
+    vim.api.nvim_create_autocmd("User", {
+        pattern = "TSUpdate",
+        callback = function()
+            local parsers = require("nvim-treesitter.parsers")
+            parsers.resc = {
+                install_info = {
+                    url = "https://github.com/achmutov/tree-sitter-resc",
+                    revision = "c7a7a3f2716c0dbe305cbde566406faa279f7402",
+                    generate_from_json = false,
+                    -- path = "/home/doc/dev/achmutov/tree-sitter-resc",
+                    generate = true,
+                    queries = "queries",
+                },
+                tier = 2,
+            }
         end,
     })
 end
