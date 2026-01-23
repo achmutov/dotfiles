@@ -304,7 +304,8 @@ local function plugins()
             },
         },
         {
-            "NeogitOrg/neogit",
+            -- "NeogitOrg/neogit",
+            "achmutov/neogit",
             dependencies = {
                 "nvim-telescope/telescope.nvim",
                 "sindrets/diffview.nvim",
@@ -475,6 +476,7 @@ local function plugins()
             opts = {
                 notification = {
                     window = { winblend = 0 },
+                    override_vim_notify = true,
                 },
             },
         },
