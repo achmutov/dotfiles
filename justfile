@@ -77,8 +77,11 @@ rust:
     # sudo setcap CAP_NET_RAW+p $(which trip)
 
 go:
+    #!/usr/bin/env sh
     go install github.com/boyter/scc/v3@latest
     go install github.com/karol-broda/snitch@latest
+    go install github.com/charmbracelet/vhs@latest
+    command -v ttyd 2>&1 >/dev/null && go install github.com/charmbracelet/vhs@latest
 
 node:
     npm i -g \
