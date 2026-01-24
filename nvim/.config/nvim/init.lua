@@ -304,8 +304,7 @@ local function plugins()
             },
         },
         {
-            -- "NeogitOrg/neogit",
-            "achmutov/neogit",
+            "NeogitOrg/neogit",
             dependencies = {
                 "nvim-telescope/telescope.nvim",
                 "sindrets/diffview.nvim",
