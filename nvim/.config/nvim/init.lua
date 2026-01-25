@@ -188,6 +188,7 @@ local function plugins()
                         },
                     },
                 })
+                require('telescope').load_extension('fzf')
                 vim.keymap.set("n", "<leader>pf", builtin.find_files, {})
                 --
                 vim.keymap.set("n", "<C-p>", builtin.git_files, {})
@@ -665,6 +666,10 @@ local function autocommands()
 
     vim.api.nvim_create_autocmd("FileType", {
         callback = function(ev)
+            local result = vim.uv.fs_stat(ev.file)
+            if result == nil or result.size > 100 * 1024 then
+                return
+            end
             local name = custom_ft_to_native[ev.match] or ev.match
             require("nvim-treesitter").install(name)
             pcall(vim.treesitter.start)
