@@ -188,7 +188,7 @@ local function plugins()
                         },
                     },
                 })
-                require('telescope').load_extension('fzf')
+                require("telescope").load_extension("fzf")
                 vim.keymap.set("n", "<leader>pf", builtin.find_files, {})
                 --
                 vim.keymap.set("n", "<C-p>", builtin.git_files, {})
@@ -262,6 +262,30 @@ local function plugins()
                     log_level = "error",
                 })
                 vim.api.nvim_set_hl(0, require("neo-tree.ui.highlights").PREVIEW, { link = "Visual" })
+            end,
+        },
+        {
+            "nvim-treesitter/nvim-treesitter-textobjects",
+            branch = "main",
+            init = function()
+                vim.g.no_plugin_maps = true
+            end,
+            config = function()
+                vim.keymap.set({ "x", "o" }, "am", function()
+                    require("nvim-treesitter-textobjects.select").select_textobject("@function.outer", "textobjects")
+                end)
+                vim.keymap.set({ "x", "o" }, "im", function()
+                    require("nvim-treesitter-textobjects.select").select_textobject("@function.inner", "textobjects")
+                end)
+                vim.keymap.set({ "x", "o" }, "ac", function()
+                    require("nvim-treesitter-textobjects.select").select_textobject("@class.outer", "textobjects")
+                end)
+                vim.keymap.set({ "x", "o" }, "ic", function()
+                    require("nvim-treesitter-textobjects.select").select_textobject("@class.inner", "textobjects")
+                end)
+                vim.keymap.set({ "x", "o" }, "as", function()
+                    require("nvim-treesitter-textobjects.select").select_textobject("@local.scope", "locals")
+                end)
             end,
         },
     }
