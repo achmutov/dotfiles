@@ -653,14 +653,14 @@ local function autocommands()
     vim.api.nvim_create_autocmd("FileType", {
         pattern = "javascript",
         callback = function()
-            vim.bo.indentexpr = "v:lua.require'utils'.XGetJavascriptIndent"
+            vim.bo.indentexpr = "v:lua.require'utils'.XGetJavascriptIndent()"
         end,
     })
 
     vim.api.nvim_create_autocmd("FileType", {
         pattern = "typescript",
         callback = function()
-            vim.bo.indentexpr = "v:lua.require'utils'.XGetTypescriptIndent"
+            vim.bo.indentexpr = "v:lua.require'utils'.XGetTypescriptIndent()"
         end,
     })
 
