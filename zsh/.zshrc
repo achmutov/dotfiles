@@ -37,10 +37,8 @@ if command -v fzf 2>&1 >/dev/null; then
       --header 'Press CTRL-Y to copy command into clipboard'"
     source <(fzf --zsh)
 fi
-
-# starship
 eval "$(starship init zsh)"
-
+eval "$(direnv hook zsh)"
 
 #############
 # Functions #
@@ -148,7 +146,7 @@ add_to_path "$GOPATH/bin"
 # }
 
 # fnm
-[ -x "$(command -v fnm)" ] && eval "`fnm env`"
+[ -x "$(command -v fnm)" ] && eval "$(fnm env --use-on-cd --shell zsh)"
 
 # zephyr
 export ZEPHYR_SDK_INSTALL_DIR="$HOME/.local"
