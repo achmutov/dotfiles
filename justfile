@@ -68,6 +68,7 @@ rust:
     cargo install --locked \
         alacritty          \
         cargo-expand       \
+        du-dust            \
         fd-find            \
         fnm                \
         just               \
