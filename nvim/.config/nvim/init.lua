@@ -118,6 +118,7 @@ local function plugins()
                 vim.o.background = "dark"
                 vim.g.gruvbox_material_transparent_background = 1
                 -- vim.cmd.colorscheme("gruvbox-material")
+                -- vim.env.BAT_THEME = "gruvbox-dark"
             end,
         },
         {
@@ -125,6 +126,7 @@ local function plugins()
             dependencies = { "xiyaowong/transparent.nvim" },
             config = function()
                 -- vim.cmd.colorscheme("koda")
+                -- vim.env.BAT_THEME = "Coldark-Dark"
             end,
         },
         {
@@ -140,6 +142,7 @@ local function plugins()
                     end,
                 })
                 vim.cmd.colorscheme("kanagawa-dragon")
+                vim.env.BAT_THEME = "Coldark-Dark"
             end,
         },
         {
@@ -351,11 +354,19 @@ local function plugins()
             },
         },
         {
-            "NeogitOrg/neogit",
+            "m00qek/baleia.nvim",
+            version = "*",
+            config = function()
+                vim.g.baleia = require("baleia").setup({})
+            end,
+        },
+        {
+            "https://github.com/stevenxxiu/neogit",
             dependencies = {
                 "nvim-telescope/telescope.nvim",
                 "sindrets/diffview.nvim",
                 "nvim-lua/plenary.nvim",
+                "m00qek/baleia.nvim",
             },
             cmd = "Neogit",
             keys = {
@@ -370,6 +381,7 @@ local function plugins()
                     process_spinner = true,
                     highlight = { bg1 = "" },
                     integrations = { telescope = true, diffview = true },
+                    log_pager = { "delta", "--width", "117", "--color-only" },
                 })
             end,
         },
@@ -746,6 +758,18 @@ local function autocommands()
                     generate = true,
                     queries = "queries",
                 },
+                tier = 2,
+            }
+            parsers.vue = {
+                install_info = {
+                    revision = "",
+                    url = "",
+                    path = "/home/doc/dev/tree-sitter-grammars/tree-sitter-vue",
+                    generate = true,
+                    queries = "queries/vue",
+                },
+                maintainers = { "@WhyNotHugo", "@lucario387" },
+                requires = { "html_tags" },
                 tier = 2,
             }
         end,
