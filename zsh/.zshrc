@@ -48,14 +48,29 @@ cheat() { curl cheat.sh/$1 }
 weather() { curl wttr.in/$1 }
 weather2() { curl v2.wttr.in/$1 }
 
-cdz() {
-    TEMP_DIR=$(find "${1:-$HOME}" -type d | fzf)
-    [ "$TEMP_DIR" = "" ] || cd $TEMP_DIR
+wk() {
+    BASE_DIRECTORY="$HOME/dev/_workspaces/"
+    DIR=$(fd --base-directory "$BASE_DIRECTORY" -d 1 -H | fzf)
+    [ "$DIR" = "" ] || cd "$BASE_DIRECTORY/$DIR"
 }
-nvimz() {
-    TEMP_DIR=$(find "." -type f | fzf)
-    [ "$TEMP_DIR" = "" ] || nvim $TEMP_DIR
+dwk() { cd "$HOME/dev/_workspaces"}
+
+dev() {
+    BASE_DIRECTORY="$HOME/dev/"
+    DIR=$(fd --base-directory "$BASE_DIRECTORY" "(\.git)$" -d 3 -H   \
+        | awk '!/^_workspaces/ { sub(/\/\.git\/$/, "", $0); print }' \
+        | fzf                                                        \
+    )
+    [ "$DIR" = "" ] || cd "$BASE_DIRECTORY/$DIR"
 }
+ddev() { cd "$HOME/dev/" }
+
+deva() {
+    BASE_DIRECTORY="$HOME/dev/achmutov/"
+    DIR=$(fd --base-directory "$BASE_DIRECTORY" -d 1 -H | fzf)
+    [ "$DIR" = "" ] || cd "$BASE_DIRECTORY/$DIR"
+}
+ddeva() { cd "$HOME/dev/achmutov/" }
 
 y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
