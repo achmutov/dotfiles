@@ -361,7 +361,7 @@ local function plugins()
             end,
         },
         {
-            "https://github.com/stevenxxiu/neogit",
+            "https://github.com/achmutov/neogit",
             dependencies = {
                 "nvim-telescope/telescope.nvim",
                 "sindrets/diffview.nvim",
@@ -381,7 +381,10 @@ local function plugins()
                     process_spinner = true,
                     highlight = { bg1 = "" },
                     integrations = { telescope = true, diffview = true },
-                    log_pager = { "delta", "--width", "117", "--color-only" },
+                    log_pager = {
+                        cmd = { "delta", "--width", "117", "--color-only" },
+                        ansi = true,
+                    },
                 })
             end,
         },
