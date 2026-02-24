@@ -118,7 +118,6 @@ local function plugins()
                 vim.o.background = "dark"
                 vim.g.gruvbox_material_transparent_background = 1
                 -- vim.cmd.colorscheme("gruvbox-material")
-                -- vim.env.BAT_THEME = "gruvbox-dark"
             end,
         },
         {
@@ -126,7 +125,6 @@ local function plugins()
             dependencies = { "xiyaowong/transparent.nvim" },
             config = function()
                 -- vim.cmd.colorscheme("koda")
-                -- vim.env.BAT_THEME = "Coldark-Dark"
             end,
         },
         {
@@ -142,7 +140,6 @@ local function plugins()
                     end,
                 })
                 vim.cmd.colorscheme("kanagawa-dragon")
-                vim.env.BAT_THEME = "Coldark-Dark"
             end,
         },
         {
@@ -354,19 +351,19 @@ local function plugins()
             },
         },
         {
-            "m00qek/baleia.nvim",
-            version = "*",
-            config = function()
-                vim.g.baleia = require("baleia").setup({})
+            "barrettruth/diffs.nvim",
+            lazy = true,
+            init = function()
+                vim.g.diffs = { neogit = true }
             end,
         },
         {
-            "https://github.com/achmutov/neogit",
+            "https://github.com/NeogitOrg/neogit",
             dependencies = {
                 "nvim-telescope/telescope.nvim",
                 "sindrets/diffview.nvim",
                 "nvim-lua/plenary.nvim",
-                "m00qek/baleia.nvim",
+                "barrettruth/diffs.nvim",
             },
             cmd = "Neogit",
             keys = {
@@ -381,10 +378,6 @@ local function plugins()
                     process_spinner = true,
                     highlight = { bg1 = "" },
                     integrations = { telescope = true, diffview = true },
-                    log_pager = {
-                        cmd = { "delta", "--width", "117", "--color-only" },
-                        ansi = true,
-                    },
                 })
             end,
         },
