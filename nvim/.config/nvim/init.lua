@@ -76,8 +76,8 @@ local function core_keymaps()
     vim.keymap.set("n", "<leader>sc", utils.toggleScrolloff(vim.o.so))
     vim.keymap.set("n", "<leader>xx", ":![ -x % ] && chmod -x % || chmod +x %<CR>")
 
-    vim.keymap.set("v", ">", ">gv", { noremap = true })
-    vim.keymap.set("v", "<", "<gv", { noremap = true })
+    vim.keymap.set("v", ">", ">gv")
+    vim.keymap.set("v", "<", "<gv")
 
     vim.keymap.set("v", "<leader>\\", utils.toggleTrailingBackslash)
     vim.keymap.set({ "n", "v" }, "<leader>t", utils.removeTrailingWhitespace)
@@ -85,6 +85,15 @@ local function core_keymaps()
     vim.keymap.set("n", "<leader>li", function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
     end)
+
+    vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+
+    vim.keymap.set("n", "<C-u>", "<C-u>M")
+    vim.keymap.set("n", "<C-d>", "<C-d>M")
+    vim.keymap.set("n", "<C-f>", "<C-d>M")
+    vim.keymap.set("n", "<C-b>", "<C-d>M")
+
+    vim.keymap.set({ "n", "v" }, "<M-r>", ":restart<cr>")
 end
 core_keymaps()
 
