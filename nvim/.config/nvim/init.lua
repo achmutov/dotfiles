@@ -774,7 +774,7 @@ local function autocommands()
     vim.api.nvim_create_autocmd("FileType", {
         callback = function(ev)
             local result = vim.uv.fs_stat(ev.file)
-            if result == nil or result.size > 100 * 1024 then
+            if result == nil or result.size > 1000 * 1024 then
                 return
             end
             local name = custom_ft_to_native[ev.match] or ev.match
