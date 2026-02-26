@@ -108,27 +108,37 @@ local custom_ft_to_native = {
 }
 
 local function plugins()
+    ---@alias Colorscheme
+    ---| "gruvbox"
+    ---| "koda"
+    ---| "kanagawa"
+    ---@type Colorscheme
+    local colorscheme = "koda"
+
     ---@type LazySpec
     local appearance = {
         "nvim-tree/nvim-web-devicons",
         {
             "sainnhe/gruvbox-material",
             dependencies = { "xiyaowong/transparent.nvim" },
+            lazy = (colorscheme ~= "gruvbox"),
             config = function()
                 vim.o.background = "dark"
                 vim.g.gruvbox_material_transparent_background = 1
-                -- vim.cmd.colorscheme("gruvbox-material")
+                vim.cmd.colorscheme("gruvbox-material")
             end,
         },
         {
             "oskarnurm/koda.nvim",
+            lazy = (colorscheme ~= "koda"),
             dependencies = { "xiyaowong/transparent.nvim" },
             config = function()
-                -- vim.cmd.colorscheme("koda")
+                vim.cmd.colorscheme("koda")
             end,
         },
         {
             "rebelot/kanagawa.nvim",
+            lazy = (colorscheme ~= "kanagawa"),
             config = function()
                 require("kanagawa").setup({
                     commentStyle = { italic = false },
