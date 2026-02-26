@@ -97,7 +97,7 @@ vim.filetype.add({
     pattern = {
         ["docker-compose%.ya?ml"] = "yaml.docker-compose",
         [".*%.resc"] = "resc",
-        [".*%.repl"] = "repl",
+        -- [".*%.repl"] = "repl",
         ["compose%.ya?ml"] = "yaml.docker-compose",
         [".*/%.github[%w/]+workflows[%w/]+.*%.ya?ml"] = "yaml.github",
     },
@@ -199,6 +199,7 @@ local function plugins()
         },
         {
             "nvim-telescope/telescope-fzf-native.nvim",
+            lazy = true,
             build = "make",
         },
         {
@@ -207,6 +208,25 @@ local function plugins()
                 "nvim-lua/plenary.nvim",
                 "nvim-telescope/telescope-fzf-native.nvim",
             },
+            keys = {
+                "<leader>pf",
+                --
+                "<C-p>",
+                "<leader>pw",
+                "<leader>ps",
+                "<leader>pr",
+                --
+                { "<leader>w", mode = { "n", "v" } },
+                --
+                "<leader>vh",
+                "gd",
+                "gf",
+                "gs",
+                "<leader>r",
+                "<leader>i",
+                "<leader>d",
+            },
+            cmd = "Telescope",
             config = function()
                 local actions = require("telescope.actions")
                 local builtin = require("telescope.builtin")
@@ -244,23 +264,28 @@ local function plugins()
         },
         {
             "theprimeagen/harpoon",
+            keys = {
+                "<leader>a",
+                "<C-e>",
+                "<C-h>",
+                "<C-t>",
+                "<C-n>",
+                "<C-s>",
+            },
             config = function()
                 local mark = require("harpoon.mark")
                 local ui = require("harpoon.ui")
+                local function nav_file(id)
+                    return function()
+                        ui.nav_file(id)
+                    end
+                end
                 vim.keymap.set("n", "<leader>a", mark.add_file)
                 vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu)
-                vim.keymap.set("n", "<C-h>", function()
-                    ui.nav_file(1)
-                end)
-                vim.keymap.set("n", "<C-t>", function()
-                    ui.nav_file(2)
-                end)
-                vim.keymap.set("n", "<C-n>", function()
-                    ui.nav_file(3)
-                end)
-                vim.keymap.set("n", "<C-s>", function()
-                    ui.nav_file(4)
-                end)
+                vim.keymap.set("n", "<C-h>", nav_file(1))
+                vim.keymap.set("n", "<C-t>", nav_file(2))
+                vim.keymap.set("n", "<C-n>", nav_file(3))
+                vim.keymap.set("n", "<C-s>", nav_file(4))
             end,
         },
         {
@@ -271,6 +296,10 @@ local function plugins()
                 "MunifTanjim/nui.nvim",
             },
             cmd = "Neotree",
+            keys = {
+                { "<leader>pv", ":Neotree toggle<CR>" },
+                { "<leader>pd", ":Neotree document_symbols toggle<CR>" },
+            },
             config = function()
                 require("neo-tree").setup({
                     sources = { "filesystem", "buffers", "git_status", "document_symbols" },
@@ -302,27 +331,27 @@ local function plugins()
             init = function()
                 vim.g.no_plugin_maps = true
             end,
+            keys = {
+                { "am", mode = { "x", "o" } },
+                { "im", mode = { "x", "o" } },
+                { "ac", mode = { "x", "o" } },
+                { "ic", mode = { "x", "o" } },
+                { "as", mode = { "x", "o" } },
+            },
             config = function()
-                vim.keymap.set({ "x", "o" }, "am", function()
-                    require("nvim-treesitter-textobjects.select").select_textobject("@function.outer", "textobjects")
-                end)
-                vim.keymap.set({ "x", "o" }, "im", function()
-                    require("nvim-treesitter-textobjects.select").select_textobject("@function.inner", "textobjects")
-                end)
-                vim.keymap.set({ "x", "o" }, "ac", function()
-                    require("nvim-treesitter-textobjects.select").select_textobject("@class.outer", "textobjects")
-                end)
-                vim.keymap.set({ "x", "o" }, "ic", function()
-                    require("nvim-treesitter-textobjects.select").select_textobject("@class.inner", "textobjects")
-                end)
-                vim.keymap.set({ "x", "o" }, "as", function()
-                    require("nvim-treesitter-textobjects.select").select_textobject("@local.scope", "locals")
-                end)
+                local function select_textobject(query_string, query_group)
+                    return function()
+                        require("nvim-treesitter-textobjects.select").select_textobject(query_string, query_group)
+                    end
+                end
+                vim.keymap.set({ "x", "o" }, "am", select_textobject("@function.outer", "textobjects"))
+                vim.keymap.set({ "x", "o" }, "im", select_textobject("@function.inner", "textobjects"))
+                vim.keymap.set({ "x", "o" }, "ac", select_textobject("@class.outer", "textobjects"))
+                vim.keymap.set({ "x", "o" }, "ic", select_textobject("@class.inner", "textobjects"))
+                vim.keymap.set({ "x", "o" }, "as", select_textobject("@local.scope", "locals"))
             end,
         },
     }
-    vim.keymap.set("n", "<leader>pv", ":Neotree toggle<CR>")
-    vim.keymap.set("n", "<leader>pd", ":Neotree document_symbols toggle<CR>")
 
     ---@type LazySpec
     local git = {
@@ -359,6 +388,7 @@ local function plugins()
                 { "<leader>gv", "<cmd>DiffviewOpen<cr>" },
                 { "<leader>gc", "<cmd>DiffviewClose<cr>" },
             },
+            cmd = "DiffviewOpen",
         },
         {
             "barrettruth/diffs.nvim",
@@ -513,8 +543,12 @@ local function plugins()
                                         end,
                                     },
                                     label = {
-                                        text = require("colorful-menu").blink_components_text,
-                                        highlight = require("colorful-menu").blink_components_highlight,
+                                        text = function(ctx)
+                                            return require("colorful-menu").blink_components_text(ctx)
+                                        end,
+                                        highlight = function(ctx)
+                                            return require("colorful-menu").blink_components_highlight(ctx)
+                                        end,
                                     },
                                 },
                             },
@@ -691,6 +725,7 @@ local function plugins()
             rtp = {
                 disabled_plugins = {
                     "netrwPlugin",
+                    "tutor",
                 },
             },
         },
@@ -759,7 +794,7 @@ local function autocommands()
                     url = "https://github.com/achmutov/tree-sitter-resc",
                     revision = "c7a7a3f2716c0dbe305cbde566406faa279f7402",
                     generate_from_json = false,
-                    -- path = "/home/doc/dev/achmutov/tree-sitter-resc",
+                    path = "/home/doc/dev/achmutov/tree-sitter-resc",
                     generate = true,
                     queries = "queries",
                 },
