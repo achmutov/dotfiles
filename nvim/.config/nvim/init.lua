@@ -122,7 +122,7 @@ local function plugins()
     ---| "koda"
     ---| "kanagawa"
     ---@type Colorscheme
-    local colorscheme = "koda"
+    local colorscheme = "kanagawa"
 
     ---@type LazySpec
     local appearance = {
@@ -374,24 +374,7 @@ local function plugins()
             "ruifm/gitlinker.nvim",
             keys = { { "<leader>gy", mode = { "n", "v" } } },
             config = function()
-                require("gitlinker").setup({
-                    callbacks = {
-                        ["dev.antmicro.com"] = function(url_data)
-                            local url = "https://" .. url_data.host .. "/git/repositories/" .. url_data.repo
-                            if url_data.file and url_data.rev then
-                                url = url .. "/blob/" .. url_data.rev .. "/" .. url_data.file
-                                if url_data.lstart then
-                                    url = url .. "#L" .. url_data.lstart
-                                    if url_data.lend then
-                                        url = url .. "-" .. url_data.lend
-                                    end
-                                end
-                            end
-                            return url
-                        end,
-                    },
-                    mappings = "<leader>gy",
-                })
+                require("gitlinker").setup({ mappings = "<leader>gy" })
             end,
         },
         {
