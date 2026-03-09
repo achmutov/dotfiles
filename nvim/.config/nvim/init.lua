@@ -182,10 +182,11 @@ local function plugins()
         "Pocco81/auto-save.nvim",
         {
             "kylechui/nvim-surround",
-            version = "^3.0.0",
+            version = "^4.0.0",
         },
         {
             "windwp/nvim-autopairs",
+            event = "InsertEnter",
             config = true,
         },
         {
