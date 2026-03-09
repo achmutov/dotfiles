@@ -714,8 +714,12 @@ local function plugins()
         },
         {
             "jmbuhr/otter.nvim",
-            lazy = true,
-            config = true,
+            keys = { "<leader>m" },
+            config = function()
+                vim.keymap.set("n", "<leader>m", function()
+                    require("otter").activate()
+                end)
+            end,
         },
     }
 
