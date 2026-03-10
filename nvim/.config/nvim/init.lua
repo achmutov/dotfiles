@@ -363,6 +363,50 @@ local function plugins()
                 vim.keymap.set({ "x", "o" }, "as", select_textobject("@local.scope", "locals"))
             end,
         },
+        {
+            "folke/flash.nvim",
+            event = "VeryLazy",
+            ---@type Flash.Config
+            opts = { modes = { char = { enabled = false } } },
+            keys = {
+                {
+                    "s",
+                    mode = { "n", "x", "o" },
+                    function()
+                        require("flash").jump()
+                    end,
+                },
+                {
+                    "S",
+                    mode = { "n", "x", "o" },
+                    function()
+                        require("flash").treesitter()
+                    end,
+                },
+                {
+                    "R",
+                    mode = { "o", "x" },
+                    function()
+                        require("flash").treesitter_search()
+                    end,
+                },
+                --
+                {
+                    "r",
+                    mode = "o",
+                    function()
+                        require("flash").remote()
+                    end,
+                },
+                {
+                    "<c-s>",
+                    mode = { "c" },
+                    function()
+                        require("flash").toggle()
+                    end,
+                },
+            },
+        },
     }
 
     ---@type LazySpec
