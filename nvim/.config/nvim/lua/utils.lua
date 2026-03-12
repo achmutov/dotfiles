@@ -13,8 +13,6 @@ function M.toggleScrolloff(val)
 end
 
 function M.toggleTrailingBackslash()
-    require("math")
-
     -- Get lines under selection
     local _, l1, _, _ = unpack(vim.fn.getpos("."))
     local _, l2, _, _ = unpack(vim.fn.getpos("v"))
