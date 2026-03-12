@@ -843,18 +843,6 @@ local function autocommands()
                 },
                 tier = 2,
             }
-            parsers.vue = {
-                install_info = {
-                    revision = "",
-                    url = "",
-                    path = "/home/doc/dev/tree-sitter-grammars/tree-sitter-vue",
-                    generate = true,
-                    queries = "queries/vue",
-                },
-                maintainers = { "@WhyNotHugo", "@lucario387" },
-                requires = { "html_tags" },
-                tier = 2,
-            }
         end,
     })
 end
