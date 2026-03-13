@@ -34,6 +34,7 @@ local function core_opts()
     vim.o.stal = 0
     vim.o.so = 8
     vim.o.scl = "auto:2"
+    vim.o.fen = false
 
     -- indent
     vim.o.ts = 4
@@ -116,13 +117,99 @@ local custom_ft_to_native = {
     ["yaml.github"] = "yaml",
 }
 
+local function autocommands()
+    vim.api.nvim_create_autocmd("BufEnter", {
+        callback = function()
+            local path = vim.fn.expand("%:p")
+            if vim.fn.isdirectory(path) ~= 0 then
+                if require("neogit.lib.git.cli").is_inside_worktree(path) then
+                    vim.cmd("Neogit cwd=" .. path)
+                else
+                    vim.cmd("Neotree current dir=" .. path)
+                end
+            end
+        end,
+        once = true,
+    })
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "javascript",
+        callback = function()
+            vim.bo.indentexpr = "v:lua.require'utils'.XGetJavascriptIndent()"
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "typescript",
+        callback = function()
+            vim.bo.indentexpr = "v:lua.require'utils'.XGetTypescriptIndent()"
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("FileType", {
+        callback = function(ev)
+            local result = vim.uv.fs_stat(ev.file)
+            if result == nil or result.size > 1000 * 1024 then
+                return
+            end
+            local name = custom_ft_to_native[ev.match] or ev.match
+            require("nvim-treesitter").install(name)
+            pcall(vim.treesitter.start)
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(event)
+            local opts = { buffer = event.buf }
+            vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+            vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, opts)
+            vim.keymap.set("n", "<leader>e", vim.lsp.buf.rename, opts)
+            vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
+            vim.keymap.set("n", "<leader>c", vim.lsp.buf.code_action, opts)
+        end,
+    })
+    --
+    vim.api.nvim_create_autocmd("User", {
+        pattern = "TSUpdate",
+        callback = function()
+            local parsers = require("nvim-treesitter.parsers")
+            parsers.resc = {
+                install_info = {
+                    url = "https://github.com/achmutov/tree-sitter-resc",
+                    revision = "c7a7a3f2716c0dbe305cbde566406faa279f7402",
+                    generate_from_json = false,
+                    path = "/home/doc/dev/achmutov/tree-sitter-resc",
+                    generate = true,
+                    queries = "queries",
+                },
+                tier = 2,
+            }
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        pattern = "photon",
+        callback = function()
+            vim.api.nvim_set_hl(0, "NonText", {})
+            vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#1b3027", fg = "#87af87" })
+            vim.api.nvim_set_hl(0, "DiffChange", { bg = "#242D30" })
+            vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#301F23" })
+            vim.api.nvim_set_hl(0, "GitSignsAdd", { bg = "NONE", fg = "#b8bb26" })
+            vim.api.nvim_set_hl(0, "GitSignsChange", { bg = "NONE", fg = "#83a598" })
+            vim.api.nvim_set_hl(0, "GitSignsDelete", { bg = "NONE", fg = "#fb4934" })
+        end,
+    })
+end
+autocommands()
+
 local function plugins()
     ---@alias Colorscheme
     ---| "gruvbox"
     ---| "koda"
     ---| "kanagawa"
+    ---| "photon"
     ---@type Colorscheme
-    local colorscheme = "kanagawa"
+    local colorscheme = "photon"
 
     ---@type LazySpec
     local appearance = {
@@ -132,9 +219,8 @@ local function plugins()
             dependencies = { "xiyaowong/transparent.nvim" },
             lazy = (colorscheme ~= "gruvbox"),
             config = function()
-                vim.o.background = "dark"
                 vim.g.gruvbox_material_transparent_background = 1
-                vim.cmd.colorscheme("gruvbox-material")
+                vim.cmd.colo("gruvbox-material")
             end,
         },
         {
@@ -142,7 +228,7 @@ local function plugins()
             lazy = (colorscheme ~= "koda"),
             dependencies = { "xiyaowong/transparent.nvim" },
             config = function()
-                vim.cmd.colorscheme("koda")
+                vim.cmd.colo("koda")
             end,
         },
         {
@@ -158,7 +244,19 @@ local function plugins()
                         return { ["@variable.builtin"] = { fg = theme.syn.special2, italic = false } }
                     end,
                 })
-                vim.cmd.colorscheme("kanagawa-dragon")
+                vim.cmd.colo("kanagawa-dragon")
+            end,
+        },
+        {
+            "axvr/photon.vim",
+            lazy = (colorscheme ~= "photon"),
+            config = function()
+                -- TODO:
+                -- * floating windows
+                -- * indent-blankline
+                -- * blink
+                -- * virtual text
+                vim.cmd.colo("photon")
             end,
         },
         {
@@ -431,9 +529,14 @@ local function plugins()
         },
         {
             "barrettruth/diffs.nvim",
-            lazy = true,
+            -- lazy = true,
+            -- cmd = { "Gdiff", "Gvdiff", "Ghdiff" },
             init = function()
-                vim.g.diffs = { neogit = true }
+                vim.g.diffs = {
+                    integrations = {
+                        neogit = true,
+                    },
+                }
             end,
         },
         {
@@ -550,8 +653,12 @@ local function plugins()
             },
             config = function()
                 require("blink-cmp").setup({
-                    keymap = { preset = "default" },
+                    keymap = {
+                        preset = "default",
+                        ["<C-space>"] = { "show", "select_and_accept", "fallback" },
+                    },
                     completion = {
+                        list = { selection = { auto_insert = false } },
                         documentation = { auto_show = true },
                         ghost_text = { enabled = true },
                         menu = {
@@ -775,78 +882,6 @@ local function plugins()
     })
 end
 plugins()
-
-local function autocommands()
-    vim.api.nvim_create_autocmd("BufEnter", {
-        callback = function()
-            local path = vim.fn.expand("%:p")
-            if vim.fn.isdirectory(path) ~= 0 then
-                if require("neogit.lib.git.cli").is_inside_worktree(path) then
-                    vim.cmd("Neogit cwd=" .. path)
-                else
-                    vim.cmd("Neotree current dir=" .. path)
-                end
-            end
-        end,
-        once = true,
-    })
-
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = "javascript",
-        callback = function()
-            vim.bo.indentexpr = "v:lua.require'utils'.XGetJavascriptIndent()"
-        end,
-    })
-
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = "typescript",
-        callback = function()
-            vim.bo.indentexpr = "v:lua.require'utils'.XGetTypescriptIndent()"
-        end,
-    })
-
-    vim.api.nvim_create_autocmd("FileType", {
-        callback = function(ev)
-            local result = vim.uv.fs_stat(ev.file)
-            if result == nil or result.size > 1000 * 1024 then
-                return
-            end
-            local name = custom_ft_to_native[ev.match] or ev.match
-            require("nvim-treesitter").install(name)
-            pcall(vim.treesitter.start)
-        end,
-    })
-
-    vim.api.nvim_create_autocmd("LspAttach", {
-        callback = function(event)
-            local opts = { buffer = event.buf }
-            vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-            vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, opts)
-            vim.keymap.set("n", "<leader>e", vim.lsp.buf.rename, opts)
-            vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
-            vim.keymap.set("n", "<leader>c", vim.lsp.buf.code_action, opts)
-        end,
-    })
-    --
-    vim.api.nvim_create_autocmd("User", {
-        pattern = "TSUpdate",
-        callback = function()
-            local parsers = require("nvim-treesitter.parsers")
-            parsers.resc = {
-                install_info = {
-                    url = "https://github.com/achmutov/tree-sitter-resc",
-                    revision = "c7a7a3f2716c0dbe305cbde566406faa279f7402",
-                    generate_from_json = false,
-                    path = "/home/doc/dev/achmutov/tree-sitter-resc",
-                    generate = true,
-                    queries = "queries",
-                },
-                tier = 2,
-            }
-        end,
-    })
-end
-autocommands()
 
 local function user_commands()
     vim.api.nvim_create_user_command("TSInstallAll", function()
