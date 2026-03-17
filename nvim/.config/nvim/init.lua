@@ -1,6 +1,8 @@
 local utils = require("utils")
 local config = require("config")
 
+PREFERRED_FORMATTER = {}
+
 local function lazy_setup()
     local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
     if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -87,7 +89,14 @@ local function core_keymaps()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
     end)
 
-    vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+    vim.keymap.set("n", "<leader>f", function()
+        return vim.lsp.buf.format({
+            filter = function(client)
+                local preferred_formatter = PREFERRED_FORMATTER[vim.bo.filetype]
+                return preferred_formatter == nil or preferred_formatter == client.name
+            end,
+        })
+    end)
 
     vim.keymap.set("n", "<C-u>", "<C-u>M")
     vim.keymap.set("n", "<C-d>", "<C-d>M")

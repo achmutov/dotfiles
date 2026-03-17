@@ -9,8 +9,7 @@ globals = {
     "scrot_window",
 
     -- nvim
-    "SetIndent",
-    "SetIndentLocal",
+    "PREFERRED_FORMATTER",
     "trail",
     "vim",
 }
