@@ -1,5 +1,5 @@
 [general]
-import = ["themes/gruvbox-dark.toml"]
+import = ["themes/zenwritten_dark.toml"]
 
 [terminal]
 shell = "zsh"
