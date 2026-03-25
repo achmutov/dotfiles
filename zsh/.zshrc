@@ -140,6 +140,10 @@ source_if_exists "$HOME/.cargo/env"
 export GOPATH="$HOME/.go"
 add_to_path "$GOPATH/bin"
 
+# js
+export PNPM_HOME="$HOME/.local/share/pnpm"
+add_to_path $PNPM_HOME
+
 # nvm
 # export NVM_DIR="$HOME/.nvm"
 # load_nvm () {
