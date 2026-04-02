@@ -540,12 +540,12 @@ local function plugins()
             end,
         },
         {
-            "sindrets/diffview.nvim",
+            "esmuellert/codediff.nvim",
             keys = {
-                { "<leader>gv", "<cmd>DiffviewOpen<cr>" },
-                { "<leader>gc", "<cmd>DiffviewClose<cr>" },
+                { "<leader>gv", ":CodeDiff " },
+                { "<leader>gc", "<cmd>CodeDiff<cr>" },
             },
-            cmd = "DiffviewOpen",
+            cmd = "CodeDiff",
         },
         {
             "barrettruth/diffs.nvim",
@@ -563,7 +563,7 @@ local function plugins()
             "https://github.com/NeogitOrg/neogit",
             dependencies = {
                 "nvim-telescope/telescope.nvim",
-                "sindrets/diffview.nvim",
+                "esmuellert/codediff.nvim",
                 "nvim-lua/plenary.nvim",
                 "barrettruth/diffs.nvim",
             },
@@ -579,7 +579,10 @@ local function plugins()
                     graph_style = "unicode",
                     process_spinner = true,
                     highlight = { bg1 = "" },
-                    integrations = { telescope = true, diffview = true },
+                    integrations = {
+                        telescope = true,
+                        codediff = true,
+                    },
                 })
             end,
         },
