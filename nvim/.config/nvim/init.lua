@@ -114,6 +114,7 @@ vim.diagnostic.config({
 
 if vim.fn.has("nvim-0.12") == 1 then
     vim.lsp.document_color.enable(true, nil, { style = "virtual" })
+    require("vim._core.ui2").enable()
 end
 
 vim.filetype.add({
