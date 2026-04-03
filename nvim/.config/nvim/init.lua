@@ -112,6 +112,10 @@ vim.diagnostic.config({
     virtual_lines = { current_line = true },
 })
 
+if vim.fn.has("nvim-0.12") == 1 then
+    vim.lsp.document_color.enable(true, nil, { style = "virtual" })
+end
+
 vim.filetype.add({
     pattern = {
         ["docker-compose%.ya?ml"] = "yaml.docker-compose",
