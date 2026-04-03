@@ -500,7 +500,7 @@ local function plugins()
                     end,
                 },
                 {
-                    "S",
+                    "Y",
                     mode = { "n", "x", "o" },
                     function()
                         require("flash").treesitter()
