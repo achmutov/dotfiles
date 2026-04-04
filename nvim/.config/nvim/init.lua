@@ -222,9 +222,10 @@ local function plugins()
     ---| "koda"
     ---| "kanagawa"
     ---| "photon"
-    ---| "zenbones"
+    ---| "zenbones:zenwritten"
+    ---| "zenbones:kanagawabones"
     ---@type Colorscheme
-    local colorscheme = "zenbones"
+    local colorscheme = "zenbones:zenwritten"
 
     ---@type LazySpec
     local appearance = {
@@ -276,12 +277,13 @@ local function plugins()
         },
         {
             "zenbones-theme/zenbones.nvim",
-            lazy = (colorscheme ~= "zenbones"),
+            lazy = (colorscheme:match("^zenbones:") == nil),
             init = function()
                 vim.g.zenwritten_compat = 1
+                vim.g.kanagawabones_compat = 1
             end,
             config = function()
-                vim.cmd.colo("zenwritten")
+                vim.cmd.colo(colorscheme:sub(("zenbones:"):len() + 1))
             end,
         },
         {
