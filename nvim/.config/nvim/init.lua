@@ -89,7 +89,7 @@ local function core_keymaps()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
     end)
 
-    vim.keymap.set("n", "<leader>f", function()
+    vim.keymap.set({ "n", "v" }, "<leader>f", function()
         return vim.lsp.buf.format({
             filter = function(client)
                 local preferred_formatter = PREFERRED_FORMATTER[vim.bo.filetype]
@@ -213,6 +213,13 @@ local function autocommands()
             vim.api.nvim_set_hl(0, "GitSignsDelete", { bg = "NONE", fg = "#fb4934" })
         end,
     })
+
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        pattern = { "zenwritten", "kanagawabones" },
+        callback = function()
+            vim.api.nvim_set_hl(0, "Whitespace", { link = "ErrorMsg" })
+        end,
+    })
 end
 autocommands()
 
@@ -232,6 +239,7 @@ local function plugins()
         "nvim-tree/nvim-web-devicons",
         {
             "sainnhe/gruvbox-material",
+            priority = 1000,
             dependencies = { "xiyaowong/transparent.nvim" },
             lazy = (colorscheme ~= "gruvbox"),
             config = function()
@@ -242,6 +250,7 @@ local function plugins()
         {
             "oskarnurm/koda.nvim",
             lazy = (colorscheme ~= "koda"),
+            priority = 1000,
             dependencies = { "xiyaowong/transparent.nvim" },
             config = function()
                 vim.cmd.colo("koda")
@@ -250,6 +259,7 @@ local function plugins()
         {
             "rebelot/kanagawa.nvim",
             lazy = (colorscheme ~= "kanagawa"),
+            priority = 1000,
             config = function()
                 require("kanagawa").setup({
                     commentStyle = { italic = false },
@@ -266,6 +276,7 @@ local function plugins()
         {
             "axvr/photon.vim",
             lazy = (colorscheme ~= "photon"),
+            priority = 1000,
             config = function()
                 -- TODO:
                 -- * floating windows
@@ -278,6 +289,7 @@ local function plugins()
         {
             "zenbones-theme/zenbones.nvim",
             lazy = (colorscheme:match("^zenbones:") == nil),
+            priority = 1000,
             init = function()
                 vim.g.zenwritten_compat = 1
                 vim.g.kanagawabones_compat = 1
