@@ -83,7 +83,7 @@ local function core_keymaps()
     vim.keymap.set("v", "<", "<gv")
 
     vim.keymap.set("v", "<leader>\\", utils.toggleTrailingBackslash)
-    vim.keymap.set({ "n", "v" }, "<leader>t", utils.removeTrailingWhitespace)
+    vim.keymap.set({ "n", "v" }, "<leader>T", utils.removeTrailingWhitespace)
 
     vim.keymap.set("n", "<leader>li", function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
