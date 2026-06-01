@@ -24,6 +24,10 @@ FPATH="$HOME/.zfunc:${FPATH}"
 autoload -Uz compinit
 compinit
 
+set -o emacs
+autoload edit-command-line
+zle -N edit-command-line
+bindkey '^X^e' edit-command-line
 
 ###########
 # Plugins #
@@ -87,7 +91,6 @@ y() {
 ###########
 
 WINIT_X11_SCALE_FACTOR=1
-set -o emacs
 
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
