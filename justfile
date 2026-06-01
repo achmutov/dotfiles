@@ -73,6 +73,7 @@ rust:
         fd-find            \
         fnm                \
         just               \
+        selene             \
         trippy             \
         uv                 \
         yazi-build
