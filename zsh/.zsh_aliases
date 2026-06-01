@@ -9,6 +9,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 alias nv="nvim"
 alias j="just"
+alias fastfetch="fastfetch -c examples/25.jsonc --structure-disabled colors --pipe"
 
 alias mpv-audio-y="mpv --ytdl-format='bestaudio/best'"
 alias mpv-video-y="mpv --ytdl-format='bestvideo[height<=?720]+bestaudio/best'"
