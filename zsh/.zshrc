@@ -14,6 +14,7 @@ HISTCONTROL=ignoredups
 HISTFILE=~/.zsh_history
 setopt appendhistory
 setopt share_history
+unsetopt beep
 HISTSIZE=1000
 SAVEHIST=2000
 
