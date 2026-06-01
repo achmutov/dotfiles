@@ -1,24 +1,23 @@
--- externals:
--- * alacritty
--- * xsecurelock
+-- additional externals:
 -- * pactl
+-- * scrot
 -- * xbacklight
--- * picom
--- * TODO screenshots
---   * scrot
---   * xclip
+-- * xclip
+-- * xdg-open
 
-local awful = require("awful")
-local wibox = require("wibox")
-local beautiful = require("beautiful")
-
-local modkey = "Mod4"
 local terminal_cmd = "alacritty"
 local lock_screen_cmd = "xsecurelock"
 local browser_cmd = "gtk-launch helium"
+local compositor_cmd = "picom"
+
+local awful = require("awful")
+local beautiful = require("beautiful")
+local naughty = require("naughty")
+local wibox = require("wibox")
+
+local modkey = "Mod4"
 
 local function error_handling()
-  local naughty = require("naughty")
   naughty.connect_signal("request::display_error", function(message, startup)
     ---@cast message string
     ---@cast startup boolean
@@ -550,10 +549,61 @@ local function setup_global_bindings()
   }
   map_append(utils)
 
-  -- TODO
-  -- local screenshots = {}
-  -- map_append(screenshots)
+  ---@param scrot_type "selection"|"window"|"all"
+  local scrot_new = function(scrot_type)
+    local dir = os.getenv("HOME") .. "/Downloads/scrot/"
+    awful.spawn.with_shell('mkdir -p "' .. dir .. '"')
+
+    local path = dir .. "_" .. os.date("%Y-%m-%d_%H-%M-%S") .. "_scrot.png"
+    local flag = ""
+    if scrot_type == "selection" then
+      flag = "-s"
+    end
+    if scrot_type == "window" then
+      flag = "-u"
+    end
+
+    awful.spawn.easy_async(
+      -- Avoid file descriptor inheritance by redirecting stdout and stderr
+      string.format("scrot -e 'xclip -sel c -t image/png < $f >/dev/null 2>&1' --line mode=edge %q %s", path, flag),
+      function()
+        naughty
+          .notification({
+            message = "",
+            icon = path,
+            icon_size = 300,
+          })
+          :connect_signal("destroyed", function(_, reason)
+            if reason == 2 then
+              awful.spawn.with_shell("xdg-open '" .. path .. "'")
+            end
+          end)
+      end
+    )
+  end
+
+  local screenshots = {
+    {
+      { { modkey }, "F1" },
+      function()
+        scrot_new("selection")
+      end,
+    },
+    {
+      { { modkey }, "F2" },
+      function()
+        scrot_new("window")
+      end,
+    },
+    {
+      { { modkey }, "F3" },
+      function()
+        scrot_new("all")
+      end,
+    },
+  }
+  map_append(screenshots)
 end
 setup_global_bindings()
 
-awful.spawn.with_shell("picom")
+awful.spawn.with_shell(compositor_cmd)
