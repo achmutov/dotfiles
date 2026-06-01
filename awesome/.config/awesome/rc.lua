@@ -15,6 +15,7 @@ local beautiful = require("beautiful")
 local modkey = "Mod4"
 local terminal_cmd = "alacritty"
 local lock_screen_cmd = "xsecurelock"
+local browser_cmd = "gtk-launch helium"
 
 local function error_handling()
   local naughty = require("naughty")
@@ -534,6 +535,12 @@ local function setup_global_bindings()
   map_append(brightness)
 
   local utils = {
+    {
+      { { modkey }, "b" },
+      function()
+        awful.spawn.with_shell(browser_cmd)
+      end,
+    },
     {
       { { modkey, "Ctrl" }, "l" },
       function()
