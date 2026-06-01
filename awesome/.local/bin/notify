@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+awesome-client "
+  naughty = require('naughty')
+  naughty.notification({
+    title='$1',
+    message='$2',
+    icon='$HOME/.config/awesome/default/cog.png',
+    icon_size=100,
+  })
+"
+echo -e "\a"
