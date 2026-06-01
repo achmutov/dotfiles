@@ -290,9 +290,10 @@ local function plugins()
             "zenbones-theme/zenbones.nvim",
             lazy = (colorscheme:match("^zenbones:") == nil),
             priority = 1000,
+            dependencies = { "xiyaowong/transparent.nvim", "rktjmp/lush.nvim" },
             init = function()
-                vim.g.zenwritten_compat = 1
-                vim.g.kanagawabones_compat = 1
+                vim.g.zenwritten = { transparent_background = 1 }
+                vim.g.kanagawabones = { transparent_background = 1 }
             end,
             config = function()
                 vim.cmd.colo(colorscheme:sub(("zenbones:"):len() + 1))
