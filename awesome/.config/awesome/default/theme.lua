@@ -1,9 +1,11 @@
 local theme_assets = require("beautiful.theme_assets")
 local xresources = require("beautiful.xresources")
 local dpi = xresources.apply_dpi
-local constants = require("constants")
+local gears = require("gears")
 
-local themes_path = constants.themes_path
+local gfs = require("gears.filesystem")
+local themes_path = gfs.get_themes_dir()
+
 local theme = {}
 
 theme.font = "sans 8"
@@ -38,6 +40,12 @@ theme.border_marked = "#91231c"
 -- ]
 -- Example:
 --theme.taglist_bg_focus = "#ff0000"
+theme.notification_font = "JetBrainsMono Nerd Font"
+theme.notification_shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 10)
+end
+theme.notification_border_color = "#04b56b"
+theme.notification_border_width = 4
 
 -- Generate taglist squares:
 local taglist_square_size = dpi(4)

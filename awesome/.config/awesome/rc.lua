@@ -1,5 +1,553 @@
-require("constants")
-require("visuals")
-require("signals")
-require("bindings")
-require("errors")
+-- externals:
+-- * alacritty
+-- * xsecurelock
+-- * pactl
+-- * xbacklight
+-- * picom
+-- * TODO screenshots
+--   * scrot
+--   * xclip
+
+local awful = require("awful")
+local wibox = require("wibox")
+local beautiful = require("beautiful")
+
+local modkey = "Mod4"
+local terminal_cmd = "alacritty"
+local lock_screen_cmd = "xsecurelock"
+
+local function error_handling()
+    local naughty = require("naughty")
+    naughty.connect_signal("request::display_error", function(message, startup)
+        ---@cast message string
+        ---@cast startup boolean
+        naughty.notification({
+            urgency = "critical",
+            title = "Oops, an error happened" .. (startup and " during startup!" or "!"),
+            message = message,
+        })
+    end)
+end
+error_handling()
+
+local menubar = require("menubar")
+menubar.utils.terminal = terminal_cmd
+beautiful.init("/home/doc/.config/awesome/default/theme.lua")
+
+local function setup_focus()
+    require("awful.autofocus")
+    client.connect_signal("mouse::enter", function(c)
+        c:emit_signal("request::activate", "mouse_enter", { raise = false })
+    end)
+end
+setup_focus()
+
+local function setup_layouts()
+    tag.connect_signal("request::default_layouts", function()
+        awful.layout.append_default_layouts({
+            awful.layout.suit.tile,
+            awful.layout.suit.floating,
+            awful.layout.suit.fair,
+            awful.layout.suit.max.fullscreen,
+        })
+    end)
+end
+setup_layouts()
+
+local function setup_screens()
+    screen.connect_signal("request::wallpaper", function(s)
+        awful.wallpaper({
+            screen = s,
+            widget = {
+                {
+                    image = beautiful.wallpaper,
+                    upscale = true,
+                    downscale = true,
+                    widget = wibox.widget.imagebox,
+                },
+                valign = "center",
+                halign = "center",
+                tiled = false,
+                widget = wibox.container.tile,
+            },
+        })
+    end)
+    screen.connect_signal("request::desktop_decoration", function(s)
+        local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
+        local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
+        local volume_widget = require("awesome-wm-widgets.pactl-widget.volume")
+        awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+        s.mypromptbox = awful.widget.prompt()
+        awful.wibar({
+            position = "top",
+            screen = s,
+            widget = {
+                layout = wibox.layout.align.horizontal,
+                {
+                    layout = wibox.layout.fixed.horizontal,
+                    awful.widget.taglist({
+                        screen = s,
+                        filter = awful.widget.taglist.filter.all,
+                    }),
+                    s.mypromptbox,
+                },
+                awful.widget.tasklist({
+                    screen = s,
+                    filter = awful.widget.tasklist.filter.currenttags,
+                }),
+                {
+                    layout = wibox.layout.fixed.horizontal,
+                    volume_widget({ widget_type = "arc" }),
+                    brightness_widget({ program = "xbacklight", timeout = 1 }),
+                    batteryarc_widget(),
+                    awful.widget.keyboardlayout(),
+                    wibox.widget.systray(),
+                    wibox.widget.textclock(),
+                    awful.widget.layoutbox(s),
+                },
+            },
+        })
+    end)
+end
+setup_screens()
+
+local function setup_rules()
+    local ruled = require("ruled")
+    ruled.client.connect_signal("request::rules", function()
+        local general = {
+            {
+                rule = {},
+                properties = {
+                    focus = awful.client.focus.filter,
+                    raise = true,
+                    screen = awful.screen.preferred,
+                    placement = awful.placement.no_overlap + awful.placement.no_offscreen,
+                },
+                callback = awful.client.setslave,
+            },
+            {
+                rule = { role = "pop-up" },
+                properties = { floating = true },
+            },
+        }
+        ruled.client.append_rules(general)
+
+        local telegram = {
+            {
+                rule = { name = "Telegram" },
+                properties = {
+                    floating = true,
+                    height = 500,
+                    width = 300,
+                },
+            },
+            {
+                rule = { class = "Telegram", name = "Media viewer" },
+                properties = { maximized = true },
+            },
+        }
+        ruled.client.append_rules(telegram)
+    end)
+end
+setup_rules()
+
+---@alias Trigger [string[], string|number]
+---@alias Mapping { [1]: Trigger, [2]: fun(...), opts?: table }
+---@param mappings Mapping[]
+---@param mapping_type "button"|"key"
+local map_bindings = function(mappings, mapping_type)
+    local awful_fun
+    if mapping_type == "button" then
+        awful_fun = awful.button
+    else
+        awful_fun = awful.key
+    end
+    return require("gears.table").map(function(mapping)
+        ---@cast mapping Mapping
+        local unpack = unpack or table.unpack
+        local trigger, callback = unpack(mapping)
+        local modifiers, button = unpack(trigger)
+        return awful_fun(modifiers, button, callback)
+    end, mappings)
+end
+
+local function setup_client_bindings()
+    client.connect_signal("request::default_mousebindings", function()
+        awful.mouse.append_client_mousebindings(map_bindings({
+            {
+                { {}, awful.button.names.LEFT },
+                function(c)
+                    c:emit_signal("request::activate", "mouse_click", { raise = true })
+                end,
+            },
+            {
+                { { modkey }, awful.button.names.LEFT },
+                function(c)
+                    c:emit_signal("request::activate", "mouse_click", { raise = true })
+                    awful.mouse.client.move(c)
+                end,
+            },
+            {
+                { { modkey }, awful.button.names.RIGHT },
+                function(c)
+                    c:emit_signal("request::activate", "mouse_click", { raise = true })
+                    awful.mouse.client.resize(c)
+                end,
+            },
+        }, "button"))
+    end)
+    client.connect_signal("request::default_keybindings", function()
+        awful.keyboard.append_client_keybindings(map_bindings({
+            {
+                { { modkey }, "f" },
+                function(c)
+                    c.fullscreen = not c.fullscreen
+                    c:raise()
+                end,
+            },
+            {
+                { { modkey }, "q" },
+                function(c)
+                    c:kill()
+                end,
+            },
+            {
+                { { modkey, "Control" }, "space" },
+                awful.client.floating.toggle,
+            },
+            {
+                { { modkey, "Control" }, "Return" },
+                function(c)
+                    c:swap(awful.client.getmaster())
+                end,
+            },
+            {
+                { { modkey }, "o" },
+                function(c)
+                    c:move_to_screen()
+                end,
+            },
+            {
+                { { modkey }, "t" },
+                function(c)
+                    c.ontop = not c.ontop
+                end,
+            },
+            {
+                { { modkey }, "n" },
+                function(c)
+                    c.minimized = true
+                end,
+            },
+            {
+                { { modkey }, "m" },
+                function(c)
+                    c.maximized = not c.maximized
+                    c:raise()
+                end,
+            },
+            {
+                { { modkey, "Control" }, "m" },
+                function(c)
+                    c.maximized_vertical = not c.maximized_vertical
+                    c:raise()
+                end,
+            },
+            {
+                { { modkey, "Shift" }, "m" },
+                function(c)
+                    c.maximized_horizontal = not c.maximized_horizontal
+                    c:raise()
+                end,
+            },
+        }, "key"))
+    end)
+end
+setup_client_bindings()
+
+local function setup_global_bindings()
+    ---@param mappings Mapping[]
+    local map_append = function(mappings)
+        awful.keyboard.append_global_keybindings(map_bindings(mappings, "key"))
+    end
+
+    local core = {
+        {
+            { { modkey }, "Return" },
+            function()
+                awful.spawn(terminal_cmd)
+            end,
+        },
+        {
+            { { modkey, "Control" }, "r" },
+            awesome.restart,
+        },
+        {
+            { { modkey, "Shift" }, "q" },
+            awesome.quit,
+        },
+    }
+    map_append(core)
+
+    local client_navigation = {
+        {
+            { { modkey }, "j" },
+            function()
+                awful.client.focus.byidx(1)
+            end,
+        },
+        {
+            { { modkey }, "k" },
+            function()
+                awful.client.focus.byidx(-1)
+            end,
+        },
+        {
+            { { modkey }, "u" },
+            awful.client.urgent.jumpto,
+        },
+    }
+    map_append(client_navigation)
+
+    local tag_navigation = {
+        {
+            { { modkey }, "Escape" },
+            awful.tag.history.restore,
+        },
+    }
+    map_append(tag_navigation)
+
+    local tag_navigation_numrow = {
+        awful.key({
+            modifiers = { modkey },
+            keygroup = "numrow",
+            on_press = function(index)
+                local screen = awful.screen.focused()
+                local tag = screen.tags[index]
+                if tag then
+                    tag:view_only()
+                end
+            end,
+        }),
+        awful.key({
+            modifiers = { modkey, "Control" },
+            keygroup = "numrow",
+            on_press = function(index)
+                local screen = awful.screen.focused()
+                local tag = screen.tags[index]
+                if tag then
+                    awful.tag.viewtoggle(tag)
+                end
+            end,
+        }),
+        awful.key({
+            modifiers = { modkey, "Shift" },
+            keygroup = "numrow",
+            on_press = function(index)
+                if client.focus then
+                    local tag = client.focus.screen.tags[index]
+                    if tag then
+                        client.focus:move_to_tag(tag)
+                    end
+                end
+            end,
+        }),
+        awful.key({
+            modifiers = { modkey, "Control", "Shift" },
+            keygroup = "numrow",
+            on_press = function(index)
+                if client.focus then
+                    local tag = client.focus.screen.tags[index]
+                    if tag then
+                        client.focus:toggle_tag(tag)
+                    end
+                end
+            end,
+        }),
+    }
+    awful.keyboard.append_global_keybindings(tag_navigation_numrow)
+
+    local screen_navigation = {
+        {
+            { { modkey, "Control" }, "j" },
+            function()
+                awful.screen.focus_relative(1)
+            end,
+        },
+        {
+            { { modkey, "Control" }, "k" },
+            function()
+                awful.screen.focus_relative(-1)
+            end,
+        },
+    }
+    map_append(screen_navigation)
+
+    local layout_manipulation = {
+        {
+            { { modkey, "Shift" }, "j" },
+            function()
+                awful.client.swap.byidx(1)
+            end,
+        },
+        {
+            { { modkey, "Shift" }, "k" },
+            function()
+                awful.client.swap.byidx(-1)
+            end,
+        },
+        {
+            { { modkey }, "l" },
+            function()
+                awful.tag.incmwfact(0.01)
+            end,
+        },
+        {
+            { { modkey }, "h" },
+            function()
+                awful.tag.incmwfact(-0.01)
+            end,
+        },
+        {
+            { { modkey }, "[" },
+            function()
+                awful.client.incwfact(-0.02)
+            end,
+        },
+        {
+            { { modkey }, "]" },
+            function()
+                awful.client.incwfact(0.02)
+            end,
+        },
+        {
+            { { modkey, "Shift" }, "h" },
+            function()
+                awful.tag.incnmaster(1, nil, true)
+            end,
+        },
+        {
+            { { modkey, "Shift" }, "l" },
+            function()
+                awful.tag.incnmaster(-1, nil, true)
+            end,
+        },
+        {
+            { { modkey, "Control" }, "h" },
+            function()
+                awful.tag.incncol(1, nil, true)
+            end,
+        },
+        {
+            { { modkey, "Control" }, "l" },
+            function()
+                awful.tag.incncol(-1, nil, true)
+            end,
+        },
+        {
+            { { modkey }, "space" },
+            function()
+                awful.layout.inc(1)
+            end,
+        },
+        {
+            { { modkey, "Shift" }, "space" },
+            function()
+                awful.layout.inc(-1)
+            end,
+        },
+        {
+            { { modkey, "Control" }, "n" },
+            function()
+                local c = awful.client.restore()
+                -- Focus restored client
+                if c then
+                    c:emit_signal("request::activate", "key.unminimize", { raise = true })
+                end
+            end,
+        },
+    }
+    map_append(layout_manipulation)
+
+    local awesome_utils = {
+        {
+            { { modkey }, "p" },
+            function()
+                menubar.show()
+            end,
+        },
+        {
+            { { modkey }, "r" },
+            function()
+                awful.screen.focused().mypromptbox:run()
+            end,
+        },
+        {
+            { { modkey }, "x" },
+            function()
+                awful.prompt.run({
+                    prompt = "Run Lua code: ",
+                    textbox = awful.screen.focused().mypromptbox.widget,
+                    exe_callback = awful.util.eval,
+                    history_path = awful.util.get_cache_dir() .. "/history_eval",
+                })
+            end,
+        },
+    }
+    map_append(awesome_utils)
+
+    local volume = {
+        {
+            { {}, "XF86AudioLowerVolume" },
+            function()
+                awful.spawn.with_shell("pactl -- set-sink-volume @DEFAULT_SINK@ -10%")
+            end,
+        },
+        {
+            { {}, "XF86AudioRaiseVolume" },
+            function()
+                awful.spawn.with_shell("pactl -- set-sink-volume @DEFAULT_SINK@ +10%")
+            end,
+        },
+        {
+            { {}, "XF86AudioMute" },
+            function()
+                awful.spawn.with_shell("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+            end,
+        },
+    }
+    map_append(volume)
+
+    local brightness = {
+        {
+            { {}, "XF86MonBrightnessDown" },
+            function()
+                awful.util.spawn("xbacklight -dec 10")
+            end,
+        },
+        {
+            { {}, "XF86MonBrightnessUp" },
+            function()
+                awful.util.spawn("xbacklight -inc 10")
+            end,
+        },
+    }
+    map_append(brightness)
+
+    local utils = {
+        {
+            { { modkey, "Ctrl" }, "l" },
+            function()
+                awful.spawn.with_shell(lock_screen_cmd)
+            end,
+        },
+    }
+    map_append(utils)
+
+    -- TODO
+    -- local screenshots = {}
+    -- map_append(screenshots)
+end
+setup_global_bindings()
+
+awful.spawn.with_shell("picom")
