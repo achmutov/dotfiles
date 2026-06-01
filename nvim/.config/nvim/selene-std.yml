@@ -1,0 +1,7 @@
+---
+base: lua51
+globals:
+  vim:
+    any: true
+  PREFERRED_FORMATTER:
+    any: true

@@ -5,11 +5,10 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: leafo/gh-actions-lua@v10
-        with:
-          luaVersion: "5.1.5"
-      - uses: leafo/gh-actions-luarocks@v4
+      - uses: actions/checkout@v6
       - run: |
-          luarocks install luacheck
+          curl https://github.com/Kampfkarren/selene/releases/download/0.31.0/selene-0.31.0-linux.zip -L -O
+          unzip selene-0.31.0-linux.zip
+          chmod +x selene
+          echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
       - uses: pre-commit/action@v3.0.1

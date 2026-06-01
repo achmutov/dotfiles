@@ -905,7 +905,7 @@ local function plugins()
 
   local spec = {}
   for _, spec_part in ipairs({ appearance, core, navigation, git, misc, cmp, lsp, lang, debugging }) do
-    assert(type(spec_part) ~= "string")
+    assert(type(spec_part) ~= "string", "invalid state")
     for _, p in ipairs(spec_part) do
       table.insert(spec, p)
     end

@@ -164,7 +164,6 @@ local map_bindings = function(mappings, mapping_type)
   end
   return require("gears.table").map(function(mapping)
     ---@cast mapping Mapping
-    local unpack = unpack or table.unpack
     local trigger, callback = unpack(mapping)
     local modifiers, button = unpack(trigger)
     return awful_fun(modifiers, button, callback)
