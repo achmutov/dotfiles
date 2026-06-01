@@ -1,3 +1,3 @@
 PREFERRED_FORMATTER = {
-    lua = "stylua",
+  lua = "stylua",
 }

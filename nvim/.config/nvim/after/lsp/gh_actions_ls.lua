@@ -1,3 +1,3 @@
 return {
-    filetypes = { "yaml.github" },
+  filetypes = { "yaml.github" },
 }

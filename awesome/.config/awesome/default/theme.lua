@@ -42,7 +42,7 @@ theme.border_marked = "#91231c"
 --theme.taglist_bg_focus = "#ff0000"
 theme.notification_font = "JetBrainsMono Nerd Font"
 theme.notification_shape = function(cr, width, height)
-    gears.shape.rounded_rect(cr, width, height, 10)
+  gears.shape.rounded_rect(cr, width, height, 10)
 end
 theme.notification_border_color = "#04b56b"
 theme.notification_border_width = 4
