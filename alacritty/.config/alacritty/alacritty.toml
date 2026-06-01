@@ -21,3 +21,7 @@ family = "JetBrainsMono Nerd Font"
 [scrolling]
 history = 100000
 multiplier = 3
+
+[bell.command]
+program = "sh"
+args = ["-c", "mpv ~/.config/alacritty/bell.mp3"]
