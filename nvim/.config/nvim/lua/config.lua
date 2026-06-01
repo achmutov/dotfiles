@@ -7,6 +7,7 @@ local mason2lsp = {
     ["docker-language-server"] = "docker_language_server",
     ["eslint-lsp"] = "eslint",
     ["gh-actions-language-server"] = "gh_actions_ls",
+    ["gopls"] = "gopls",
     ["json-lsp"] = "jsonls",
     ["just-lsp"] = "just",
     ["lua-language-server"] = "lua_ls",
