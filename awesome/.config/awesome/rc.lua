@@ -32,7 +32,49 @@ error_handling()
 
 local menubar = require("menubar")
 menubar.utils.terminal = terminal_cmd
-beautiful.init("/home/doc/.config/awesome/default/theme.lua")
+
+local function setup_theme()
+  local dpi = require("beautiful.xresources").apply_dpi
+
+  local theme = {}
+
+  theme.font = "sans 8"
+
+  theme.bg_normal = "#000000"
+  theme.bg_focus = "#222222"
+  theme.bg_urgent = "#ff0000"
+  theme.bg_minimize = "#444444"
+  theme.bg_systray = theme.bg_normal
+
+  theme.fg_normal = "#aaaaaa"
+  theme.fg_focus = "#ffffff"
+  theme.fg_urgent = "#ffffff"
+  theme.fg_minimize = "#ffffff"
+
+  theme.border_width = dpi(1)
+  theme.border_normal = "#000000"
+  theme.border_focus = "#6F5282"
+  theme.border_marked = "#91231c"
+
+  theme.notification_font = "JetBrainsMono Nerd Font"
+  theme.notification_border_color = theme.border_focus
+
+  local theme_assets = require("beautiful.theme_assets")
+  local taglist_square_size = dpi(4)
+  theme.taglist_squares_sel = theme_assets.taglist_squares_sel(taglist_square_size, theme.fg_normal)
+  theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(taglist_square_size, theme.fg_normal)
+
+  theme.menu_height = dpi(15)
+  theme.menu_width = dpi(100)
+
+  theme.layout_tile = "~/.config/awesome/resources/layout_tilew.png"
+  theme.layout_floating = "~/.config/awesome/resources/layout_floatingw.png"
+  theme.layout_fairv = "~/.config/awesome/resources/layout_fairvw.png"
+  theme.layout_fullscreen = "~/.config/awesome/resources/layout_fullscreenw.png"
+
+  beautiful.init(theme)
+end
+setup_theme()
 
 local function setup_focus()
   require("awful.autofocus")

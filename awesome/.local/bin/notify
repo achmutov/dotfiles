@@ -5,7 +5,7 @@ awesome-client "
   naughty.notification({
     title='$1',
     message='$2',
-    icon='$HOME/.config/awesome/default/cog.png',
+    icon='$HOME/.config/awesome/resources/cog.png',
     icon_size=100,
   })
 "
