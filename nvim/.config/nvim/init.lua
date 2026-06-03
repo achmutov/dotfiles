@@ -231,6 +231,7 @@ local function plugins()
   ---| "photon"
   ---| "zenbones:zenwritten"
   ---| "zenbones:kanagawabones"
+  ---| "moonfly"
   ---@type Colorscheme
   local colorscheme = "zenbones:zenwritten"
 
@@ -260,6 +261,7 @@ local function plugins()
       "rebelot/kanagawa.nvim",
       lazy = (colorscheme ~= "kanagawa"),
       priority = 1000,
+      dependencies = { "xiyaowong/transparent.nvim" },
       config = function()
         require("kanagawa").setup({
           commentStyle = { italic = false },
@@ -277,6 +279,7 @@ local function plugins()
       "axvr/photon.vim",
       lazy = (colorscheme ~= "photon"),
       priority = 1000,
+      dependencies = { "xiyaowong/transparent.nvim" },
       config = function()
         -- TODO:
         -- * floating windows
@@ -297,6 +300,18 @@ local function plugins()
       end,
       config = function()
         vim.cmd.colo(colorscheme:sub(("zenbones:"):len() + 1))
+      end,
+    },
+    {
+      "bluz71/vim-moonfly-colors",
+      name = "moonfly",
+      priority = 1000,
+      lazy = (colorscheme ~= "moonfly"),
+      init = function()
+        vim.g.moonflyTransparent = true
+      end,
+      config = function()
+        vim.cmd.colo("moonfly")
       end,
     },
     {
