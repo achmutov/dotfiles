@@ -100,8 +100,8 @@ local function core_keymaps()
 
   vim.keymap.set("n", "<C-u>", "<C-u>M")
   vim.keymap.set("n", "<C-d>", "<C-d>M")
-  vim.keymap.set("n", "<C-f>", "<C-d>M")
-  vim.keymap.set("n", "<C-b>", "<C-d>M")
+  vim.keymap.set("n", "<C-f>", "<C-f>M")
+  vim.keymap.set("n", "<C-b>", "<C-b>M")
 
   vim.keymap.set({ "n", "v" }, "<M-r>", ":restart<cr>")
 end
