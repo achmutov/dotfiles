@@ -696,6 +696,7 @@ local function plugins()
       end,
       cmd = "Neogen",
     },
+    "lewis6991/fileline.nvim",
   }
   vim.keymap.set("n", "<leader>ng", vim.cmd.Neogen)
 
