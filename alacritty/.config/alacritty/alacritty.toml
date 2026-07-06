@@ -27,4 +27,4 @@ multiplier = 3
 
 [bell.command]
 program = "sh"
-args = ["-c", "mpv ~/.config/alacritty/bell.mp3"]
+args = ["-c", "mpv ~/.config/alacritty/bell.mp3 --volume=30"]
