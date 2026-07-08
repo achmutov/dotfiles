@@ -22,6 +22,8 @@ local mason2lsp = {
   ["typos-lsp"] = "typos_lsp",
   ["vue-language-server"] = "vue_ls",
   ["yaml-language-server"] = "yamlls",
+  ["tsgo"] = "tsgo",
+  ["neocmakelsp"] = "neocmake",
   ["zls"] = "zls",
 }
 
