@@ -857,6 +857,7 @@ local function plugins()
       config = function()
         local dap = require("dap")
         local ui = require("dapui")
+        local dapfile = ".nvim-dap.lua"
         vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint)
         vim.keymap.set("n", "<leader>?", function()
           ui.eval(nil, { enter = true }) ---@diagnostic disable-line: missing-fields
@@ -870,6 +871,12 @@ local function plugins()
         vim.keymap.set("n", "<leader><F12>", dap.restart)
         vim.keymap.set("n", "<leader>9", dap.up)
         vim.keymap.set("n", "<leader>0", dap.down)
+        vim.keymap.set("n", "<leader>R", function()
+          local ok, _ = pcall(vim.cmd.so, ".nvim-dap.lua")
+          if ok then
+            vim.notify("Reloaded " .. dapfile)
+          end
+        end)
 
         dap.adapters.python = {
           type = "executable",
@@ -896,6 +903,11 @@ local function plugins()
         dap.listeners.before.launch.dapui_config = ui.open
         dap.listeners.before.event_terminated.dapui_config = ui.close
         dap.listeners.before.event_exited.dapui_config = ui.close
+
+        local ok, _ = pcall(vim.cmd.so, dapfile)
+        if ok then
+          vim.notify("Imported " .. dapfile)
+        end
       end,
     },
     {
