@@ -893,11 +893,26 @@ local function plugins()
           command = "lldb-dap",
         }
 
-        dap.adapters.gdb = {
-          type = "executable",
-          command = "gdb",
-          args = { "--quiet", "--interpreter=dap" },
-        }
+        dap.adapters.gdb = function(cb, conf)
+          local args = {
+            "--quiet",
+            "--interpreter=dap",
+          }
+          if conf.port ~= nil then
+            local address = conf.address or ""
+            vim.list_extend(args, {
+              "-ex",
+              "target remote " .. address .. ":" .. tostring(conf.port),
+              "-ex",
+              "symbol-file " .. conf.program,
+            })
+          end
+          cb({
+            type = "executable",
+            command = "gdb",
+            args = args,
+          })
+        end
 
         dap.listeners.before.attach.dapui_config = ui.open
         dap.listeners.before.launch.dapui_config = ui.open
