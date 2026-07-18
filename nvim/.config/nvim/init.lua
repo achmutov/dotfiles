@@ -883,14 +883,39 @@ local function plugins()
           command = "debugpy-adapter",
         }
 
+        local setup_lldb = function(conf, cb)
+          local final_config = vim.deepcopy(conf)
+          final_config.initCommands = final_config.initCommands or {}
+
+          if conf.tty ~= nil then
+            vim.list_extend(final_config.initCommands, {
+              "settings set target.error-path " .. conf.tty,
+              "settings set target.output-path " .. conf.tty,
+              "settings set target.input-path " .. conf.tty,
+            })
+          end
+
+          if conf.port ~= nil then
+            local address = ""
+            if conf.address ~= nil then
+              address = conf.address .. ":"
+            end
+            vim.list_extend(final_config.initCommands, { "gdb-remote " .. address .. tostring(conf.port) })
+          end
+
+          cb(final_config)
+        end
+
         dap.adapters.codelldb = {
           type = "executable",
           command = "codelldb",
+          enrich_config = setup_lldb,
         }
 
         dap.adapters.lldb = {
           type = "executable",
           command = "lldb-dap",
+          enrich_config = setup_lldb,
         }
 
         dap.adapters.gdb = function(cb, conf)
