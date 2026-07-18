@@ -5,6 +5,7 @@ stow:
         nvim      \
         picom     \
         scripts   \
+        stylua    \
         tmux      \
         trippy    \
         zathura   \
