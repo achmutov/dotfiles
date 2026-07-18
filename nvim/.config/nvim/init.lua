@@ -1006,5 +1006,48 @@ local function user_commands()
     end, config.mason)
     require("mason.api.command").MasonInstall(to_install)
   end, {})
+
+  vim.api.nvim_create_user_command("Shlex", function(opts)
+    -- args vs selection
+    local cmd
+    if opts.range == 0 then
+      cmd = opts.args
+    else
+      local lines = vim.api.nvim_buf_get_lines(0, opts.line1 - 1, opts.line2, true)
+      cmd = lines[1]
+      for _, line in ipairs(vim.list_slice(lines, 2)) do
+        cmd = cmd .. "\n" .. line
+      end
+    end
+    if cmd == nil or cmd == "" then
+      vim.notify("Shlex failed: no input provided", vim.log.levels.WARN)
+      return
+    end
+    -- parse
+    local sep = "__SHLEX_SEP"
+    local script = string.format([[eval "set -- $1"; for var in "$@"; do printf '%%s%s' "$var"; done]], sep)
+    local result = vim
+      .system({
+        "sh",
+        "-c",
+        script,
+        "_",
+        cmd,
+      })
+      :wait()
+    -- check
+    local output = result.stdout
+    if result.code ~= 0 or output == nil then
+      vim.notify("Failed to Shlex", vim.log.levels.ERROR)
+      return
+    end
+    -- split by sep
+    local args = vim.split(output:sub(1, -#sep - 1), sep, { plain = true })
+    -- print and store
+    local formatted = vim.inspect(args)
+    vim.fn.setreg("+", formatted)
+    vim.fn.setreg('"', formatted)
+    vim.print("Shlexed to clipboard:\n" .. formatted)
+  end, { nargs = "*", range = true })
 end
 user_commands()
