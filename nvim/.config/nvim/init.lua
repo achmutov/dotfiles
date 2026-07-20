@@ -1,6 +1,3 @@
-local utils = require("utils")
-local config = require("config")
-
 PREFERRED_FORMATTER = {}
 
 local function lazy_setup()
@@ -76,14 +73,21 @@ local function core_keymaps()
   vim.keymap.set("v", "<leader>y", '"+y')
   vim.keymap.set("x", "<leader>p", '"_dP')
 
-  vim.keymap.set("n", "<leader>sc", utils.toggleScrolloff(vim.o.so))
+  local so = vim.o.so
+  vim.keymap.set("n", "<leader>sc", function()
+    require("utils").toggleScrolloff(so)
+  end)
   vim.keymap.set("n", "<leader>xx", ":![ -x % ] && chmod -x % || chmod +x %<CR>")
 
   vim.keymap.set("v", ">", ">gv")
   vim.keymap.set("v", "<", "<gv")
 
-  vim.keymap.set("v", "<leader>\\", utils.toggleTrailingBackslash)
-  vim.keymap.set({ "n", "v" }, "<leader>T", utils.removeTrailingWhitespace)
+  vim.keymap.set("v", "<leader>\\", function()
+    require("utils").toggleTrailingBackslash()
+  end)
+  vim.keymap.set({ "n", "v" }, "<leader>T", function()
+    require("utils").removeTrailingWhitespace()
+  end)
 
   vim.keymap.set("n", "<leader>li", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
@@ -787,7 +791,7 @@ local function plugins()
       event = "VeryLazy",
       config = function()
         vim.env.PATH = vim.env.PATH .. ":" .. (vim.fn.stdpath("data") .. "/mason/bin")
-        vim.lsp.enable(config.lsp)
+        vim.lsp.enable(require("config").lsp)
       end,
     },
     {
@@ -996,58 +1000,19 @@ plugins()
 
 local function user_commands()
   vim.api.nvim_create_user_command("TSInstallAll", function()
-    require("nvim-treesitter").install(config.treesitter):wait()
+    require("nvim-treesitter").install(require("config").treesitter):wait()
   end, {})
 
   vim.api.nvim_create_user_command("MasonInstallAll", function()
     local installed_packages = require("mason-registry").get_installed_package_names()
     local to_install = vim.tbl_filter(function(p)
       return not vim.tbl_contains(installed_packages, p)
-    end, config.mason)
+    end, require("config").mason)
     require("mason.api.command").MasonInstall(to_install)
   end, {})
 
   vim.api.nvim_create_user_command("Shlex", function(opts)
-    -- args vs selection
-    local cmd
-    if opts.range == 0 then
-      cmd = opts.args
-    else
-      local lines = vim.api.nvim_buf_get_lines(0, opts.line1 - 1, opts.line2, true)
-      cmd = lines[1]
-      for _, line in ipairs(vim.list_slice(lines, 2)) do
-        cmd = cmd .. "\n" .. line
-      end
-    end
-    if cmd == nil or cmd == "" then
-      vim.notify("Shlex failed: no input provided", vim.log.levels.WARN)
-      return
-    end
-    -- parse
-    local sep = "__SHLEX_SEP"
-    local script = string.format([[eval "set -- $1"; for var in "$@"; do printf '%%s%s' "$var"; done]], sep)
-    local result = vim
-      .system({
-        "sh",
-        "-c",
-        script,
-        "_",
-        cmd,
-      })
-      :wait()
-    -- check
-    local output = result.stdout
-    if result.code ~= 0 or output == nil then
-      vim.notify("Failed to Shlex", vim.log.levels.ERROR)
-      return
-    end
-    -- split by sep
-    local args = vim.split(output:sub(1, -#sep - 1), sep, { plain = true })
-    -- print and store
-    local formatted = vim.inspect(args)
-    vim.fn.setreg("+", formatted)
-    vim.fn.setreg('"', formatted)
-    vim.print("Shlexed to clipboard:\n" .. formatted)
+    require("utils").shlex(opts)
   end, { nargs = "*", range = true })
 end
 user_commands()
