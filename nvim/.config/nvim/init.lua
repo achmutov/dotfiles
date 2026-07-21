@@ -224,6 +224,13 @@ local function autocommands()
       vim.api.nvim_set_hl(0, "Whitespace", { link = "ErrorMsg" })
     end,
   })
+
+  vim.api.nvim_create_autocmd("BufNewFile", {
+    nested = true,
+    callback = function()
+      require("source_pos").focus()
+    end,
+  })
 end
 autocommands()
 
@@ -700,7 +707,6 @@ local function plugins()
       end,
       cmd = "Neogen",
     },
-    "lewis6991/fileline.nvim",
   }
   vim.keymap.set("n", "<leader>ng", vim.cmd.Neogen)
 
