@@ -512,8 +512,16 @@ local function plugins()
       keys = {
         { "am", mode = { "x", "o" } },
         { "im", mode = { "x", "o" } },
+        { "at", mode = { "x", "o" } },
+        { "it", mode = { "x", "o" } },
         { "ac", mode = { "x", "o" } },
         { "ic", mode = { "x", "o" } },
+        { "al", mode = { "x", "o" } },
+        { "il", mode = { "x", "o" } },
+        { "ab", mode = { "x", "o" } },
+        { "ib", mode = { "x", "o" } },
+        { "aa", mode = { "x", "o" } },
+        { "ia", mode = { "x", "o" } },
         { "as", mode = { "x", "o" } },
       },
       config = function()
@@ -522,11 +530,18 @@ local function plugins()
             require("nvim-treesitter-textobjects.select").select_textobject(query_string, query_group)
           end
         end
-        vim.keymap.set({ "x", "o" }, "am", select_textobject("@function.outer", "textobjects"))
-        vim.keymap.set({ "x", "o" }, "im", select_textobject("@function.inner", "textobjects"))
-        vim.keymap.set({ "x", "o" }, "ac", select_textobject("@class.outer", "textobjects"))
-        vim.keymap.set({ "x", "o" }, "ic", select_textobject("@class.inner", "textobjects"))
-        vim.keymap.set({ "x", "o" }, "as", select_textobject("@local.scope", "locals"))
+        vim.keymap.set({ "x", "o" }, "am", select_textobject("@function.outer"))
+        vim.keymap.set({ "x", "o" }, "im", select_textobject("@function.inner"))
+        vim.keymap.set({ "x", "o" }, "at", select_textobject("@class.outer"))
+        vim.keymap.set({ "x", "o" }, "it", select_textobject("@class.inner"))
+        vim.keymap.set({ "x", "o" }, "ac", select_textobject("@conditional.outer"))
+        vim.keymap.set({ "x", "o" }, "ic", select_textobject("@conditional.inner"))
+        vim.keymap.set({ "x", "o" }, "al", select_textobject("@loop.outer"))
+        vim.keymap.set({ "x", "o" }, "il", select_textobject("@loop.inner"))
+        vim.keymap.set({ "x", "o" }, "ab", select_textobject("@block.outer"))
+        vim.keymap.set({ "x", "o" }, "ib", select_textobject("@block.inner"))
+        vim.keymap.set({ "x", "o" }, "aa", select_textobject("@parameter.outer"))
+        vim.keymap.set({ "x", "o" }, "ia", select_textobject("@parameter.inner"))
       end,
     },
     {
