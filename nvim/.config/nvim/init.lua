@@ -218,13 +218,6 @@ local function autocommands()
     end,
   })
 
-  vim.api.nvim_create_autocmd("ColorScheme", {
-    pattern = { "zenwritten", "kanagawabones" },
-    callback = function()
-      vim.api.nvim_set_hl(0, "Whitespace", { link = "ErrorMsg" })
-    end,
-  })
-
   vim.api.nvim_create_autocmd("BufNewFile", {
     nested = true,
     callback = function()
@@ -326,9 +319,17 @@ local function plugins()
       end,
     },
     {
-      "lukas-reineke/indent-blankline.nvim",
-      main = "ibl",
-      opts = {},
+      "saghen/blink.indent",
+      opts = {
+        dedent_scoped_filetypes = { robot = true },
+        mappings = {
+          object_scope = "is",
+          object_scope_with_border = "as",
+        },
+        scope = {
+          highlights = { "BlinkIndentScope" },
+        },
+      },
     },
     {
       "nvim-lualine/lualine.nvim",
