@@ -177,6 +177,7 @@ local function setup_rules()
     local telegram = {
       {
         rule = { name = "Telegram" },
+        except = { name = "TelegramDesktop" },
         properties = {
           floating = true,
           height = 500,
