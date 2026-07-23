@@ -898,10 +898,7 @@ local function plugins()
         vim.keymap.set("n", "<leader>9", dap.up)
         vim.keymap.set("n", "<leader>0", dap.down)
         vim.keymap.set("n", "<leader>R", function()
-          local ok, _ = pcall(vim.cmd.so, ".nvim-dap.lua")
-          if ok then
-            vim.notify("Reloaded " .. dapfile)
-          end
+          _ = pcall(vim.cmd.so, dapfile) and vim.notify("Reloaded " .. dapfile)
         end)
 
         dap.adapters.python = {
@@ -970,10 +967,7 @@ local function plugins()
         dap.listeners.before.event_terminated.dapui_config = ui.close
         dap.listeners.before.event_exited.dapui_config = ui.close
 
-        local ok, _ = pcall(vim.cmd.so, dapfile)
-        if ok then
-          vim.notify("Imported " .. dapfile)
-        end
+        _ = pcall(vim.cmd.so, dapfile) and vim.notify("Imported " .. dapfile)
       end,
     },
     {
@@ -1000,9 +994,7 @@ local function plugins()
   local spec = {}
   for _, spec_part in ipairs({ appearance, core, navigation, git, misc, cmp, lsp, lang, debugging }) do
     assert(type(spec_part) ~= "string", "invalid state")
-    for _, p in ipairs(spec_part) do
-      table.insert(spec, p)
-    end
+    vim.list_extend(spec, spec_part)
   end
 
   require("lazy").setup({
