@@ -88,6 +88,9 @@ local function core_keymaps()
   vim.keymap.set({ "n", "v" }, "<leader>T", function()
     require("utils").removeTrailingWhitespace()
   end)
+  vim.keymap.set("v", "<leader>S", function()
+    require("utils").shlex_visual()
+  end)
 
   vim.keymap.set("n", "<leader>li", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
@@ -1026,7 +1029,7 @@ local function user_commands()
   end, {})
 
   vim.api.nvim_create_user_command("Shlex", function(opts)
-    require("utils").shlex(opts)
+    require("utils").shlex_cmd(opts)
   end, { nargs = "*", range = true })
 end
 user_commands()

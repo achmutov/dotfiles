@@ -98,22 +98,53 @@ function M.XGetTypescriptIndent()
 end
 
 ---@param opts vim.api.keyset.create_user_command.command_args
-function M.shlex(opts)
+function M.shlex_cmd(opts)
   -- args vs selection
   local cmd
   if opts.range == 0 then
     cmd = opts.args
   else
     local lines = vim.api.nvim_buf_get_lines(0, opts.line1 - 1, opts.line2, true)
-    cmd = lines[1]
-    for _, line in ipairs(vim.list_slice(lines, 2)) do
-      cmd = cmd .. "\n" .. line
-    end
+    cmd = table.concat(lines, "\n")
   end
   if cmd == nil or cmd == "" then
     vim.notify("Shlex failed: no input provided", vim.log.levels.WARN)
     return
   end
+  M.shlex(cmd)
+end
+
+--- support v and V
+---@param buf integer?
+function M.shlex_visual(buf)
+  buf = buf or 0
+
+  local _, l1, c1, _ = unpack(vim.fn.getpos("."))
+  local _, l2, c2, _ = unpack(vim.fn.getpos("v"))
+  if l1 > l2 then
+    l1, l2 = l2, l1
+    c1, c2 = c2, c1
+  else
+    if l1 == l2 and c1 > c2 then
+      c1, c2 = c2, c1
+    end
+  end
+
+  local lines
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "v" then
+    lines = vim.api.nvim_buf_get_text(buf, l1 - 1, c1 - 1, l2 - 1, c2, {})
+  elseif mode == "V" then
+    lines = vim.api.nvim_buf_get_lines(0, l1 - 1, l2, false)
+  else
+    return
+  end
+
+  M.shlex(table.concat(lines, "\n"))
+end
+
+---@param cmd string
+function M.shlex(cmd)
   -- parse
   local sep = "__SHLEX_SEP"
   local script = string.format([[eval "set -- $1"; for var in "$@"; do printf '%%s%s' "$var"; done]], sep)
