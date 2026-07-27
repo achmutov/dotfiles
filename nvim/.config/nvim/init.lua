@@ -877,6 +877,7 @@ local function plugins()
         "nvim-neotest/nvim-nio",
         "rcarriga/nvim-dap-ui",
         "theHamsta/nvim-dap-virtual-text",
+        "nvim-telescope/telescope.nvim",
       },
       lazy = true,
       keys = {
@@ -884,10 +885,12 @@ local function plugins()
         "<leader>b",
       },
       config = function()
+        local telescope_dap = require("telescope").load_extension("dap")
         local dap = require("dap")
         local ui = require("dapui")
         local dapfile = ".nvim-dap.lua"
         vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint)
+        vim.keymap.set("n", "<leader>B", telescope_dap.breakpoints)
         vim.keymap.set("n", "<leader>?", function()
           ui.eval(nil, { enter = true }) ---@diagnostic disable-line: missing-fields
         end)
@@ -903,6 +906,7 @@ local function plugins()
         vim.keymap.set("n", "<leader>R", function()
           _ = pcall(vim.cmd.so, dapfile) and vim.notify("Reloaded " .. dapfile)
         end)
+        vim.keymap.set("n", "<leader>F", telescope_dap.frames)
 
         dap.adapters.python = {
           type = "executable",
