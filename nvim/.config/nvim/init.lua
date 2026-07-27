@@ -393,6 +393,9 @@ local function plugins()
         "<leader>pw",
         "<leader>ps",
         "<leader>pr",
+        "<leader>pt",
+        "<leader>pz",
+        "<leader>po",
         --
         { "<leader>w", mode = { "n", "v" } },
         --
@@ -400,47 +403,108 @@ local function plugins()
         "gd",
         "gf",
         "gs",
+        "gb",
         "<leader>r",
         "<leader>i",
         "<leader>d",
       },
       cmd = "Telescope",
       config = function()
-        local actions = require("telescope.actions")
-        local builtin = require("telescope.builtin")
-        require("telescope").setup({
-          defaults = {
-            mappings = {
-              i = {
-                ["<M-9>"] = actions.cycle_history_next,
-                ["<M-0>"] = actions.cycle_history_prev,
+        do
+          local actions = require("telescope.actions")
+          local action_state = require("telescope.actions.state")
+
+          --- @param esc boolean
+          local function action_print_selected(esc)
+            return function()
+              local entry = action_state.get_selected_entry()
+              local ordinal = entry[1] or entry.ordinal
+              if ordinal then
+                _ = esc and vim.api.nvim_input("<esc>")
+                print(ordinal)
+              end
+            end
+          end
+
+          require("telescope").setup({
+            defaults = {
+              mappings = {
+                i = {
+                  ["<M-9>"] = actions.cycle_history_next,
+                  ["<M-0>"] = actions.cycle_history_prev,
+                  ["<M-i>"] = action_print_selected(true),
+                },
+                n = {
+                  ["<M-i>"] = action_print_selected(false),
+                },
+              },
+              layout_config = {
+                horizontal = {
+                  height = 0.95,
+                  width = 0.95,
+                },
               },
             },
-          },
-        })
+          })
+        end
         require("telescope").load_extension("fzf")
-        vim.keymap.set("n", "<leader>pf", builtin.find_files, {})
-        --
+
+        local builtin = require("telescope.builtin")
+
+        do
+          local find_files_opts
+          if vim.fn.executable("rg") == 1 then
+            find_files_opts = {
+              hidden = true,
+              find_command = vim.list_extend(
+                { "rg", "--files", "--color", "never" }, -- telescope default
+                { "-g", "!.git" }
+              ),
+            }
+          end
+          vim.keymap.set("n", "<leader>pf", function()
+            builtin.find_files(find_files_opts)
+          end)
+        end
         vim.keymap.set("n", "<C-p>", function()
-          pcall(builtin.git_files)
-        end, {})
-        vim.keymap.set("n", "<leader>pw", function()
-          builtin.grep_string({ search = vim.fn.input("Grep > ") })
+          if vim.bo.filetype ~= "TelescopePrompt" then
+            _ = pcall(builtin.git_files) or vim.notify("No git repo found")
+          end
         end)
-        vim.keymap.set("n", "<leader>ps", builtin.live_grep, {})
-        vim.keymap.set("n", "<leader>pr", builtin.resume, {})
-        --
-        vim.keymap.set("n", "<leader>w", builtin.grep_string, {})
-        vim.keymap.set("v", "<leader>w", builtin.grep_string, {})
-        --
-        vim.keymap.set("n", "<leader>vh", builtin.help_tags, {})
-        vim.keymap.set("n", "gd", builtin.lsp_definitions, {})
-        vim.keymap.set("n", "gf", builtin.lsp_type_definitions, {})
-        vim.keymap.set("n", "gs", builtin.lsp_dynamic_workspace_symbols, {})
-        vim.keymap.set("n", "gb", builtin.lsp_document_symbols, {})
-        vim.keymap.set("n", "<leader>r", builtin.lsp_references, {})
-        vim.keymap.set("n", "<leader>i", builtin.lsp_implementations, {})
-        vim.keymap.set("n", "<leader>d", builtin.diagnostics, {})
+        vim.keymap.set("n", "<leader>pw", function()
+          builtin.grep_string({
+            search = vim.fn.input("Grep > "),
+            additional_args = { "--hidden" },
+          })
+        end)
+        vim.keymap.set("n", "<leader>ps", function()
+          builtin.live_grep({ additional_args = { "--hidden" } })
+        end)
+        vim.keymap.set("n", "<leader>pr", builtin.resume)
+        vim.keymap.set("n", "<leader>pt", builtin.treesitter)
+        vim.keymap.set("n", "<leader>pz", builtin.current_buffer_fuzzy_find)
+        vim.keymap.set("n", "<leader>po", builtin.oldfiles)
+        vim.keymap.set("n", "<leader>w", builtin.grep_string)
+        vim.keymap.set("v", "<leader>w", builtin.grep_string)
+        vim.keymap.set("n", "<leader>vh", builtin.help_tags)
+        vim.keymap.set("n", "gd", builtin.lsp_definitions)
+        vim.keymap.set("n", "gf", builtin.lsp_type_definitions)
+        vim.keymap.set("n", "gs", function()
+          builtin.lsp_dynamic_workspace_symbols({
+            fname_width = 0.7,
+            symbol_width = 0.2,
+            symbol_type_width = 0.1,
+          })
+        end)
+        vim.keymap.set("n", "gb", function()
+          builtin.lsp_document_symbols({
+            symbol_width = 0.5,
+            symbol_type_width = 0.5,
+          })
+        end)
+        vim.keymap.set("n", "<leader>r", builtin.lsp_references)
+        vim.keymap.set("n", "<leader>i", builtin.lsp_implementations)
+        vim.keymap.set("n", "<leader>d", builtin.diagnostics)
       end,
     },
     {
