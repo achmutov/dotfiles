@@ -30,6 +30,10 @@ autoload edit-command-line
 zle -N edit-command-line
 bindkey '^X^e' edit-command-line
 
+cmp-to-clip() { xclip -sel c <<< "$BUFFER" }
+zle -N cmp-to-clip
+bindkey '^Y' cmp-to-clip
+
 ###########
 # Plugins #
 ###########
