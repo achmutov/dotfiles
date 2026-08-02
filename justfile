@@ -8,6 +8,7 @@ stow:
         stylua    \
         tmux      \
         trippy    \
+        yazi      \
         zathura   \
         zsh
 
