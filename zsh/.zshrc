@@ -125,8 +125,9 @@ source_if_exists() {
 }
 
 # zsh
-source_if_exists "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
-source_if_exists "$HOME/.zsh_aliases"
+source_if_exists    "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source              "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+source_if_exists    "$HOME/.zsh_aliases"
 
 # general
 add_to_path            "$HOME/bin"

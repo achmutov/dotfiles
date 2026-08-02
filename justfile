@@ -57,6 +57,7 @@ tmux-clean:
 
 zsh:
     just clone-or-pull "https://github.com/zsh-users/zsh-autosuggestions" "$HOME/.zsh/zsh-autosuggestions"
+    just clone-or-pull "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$HOME/.zsh/zsh-syntax-highlighting"
 
 zsh-clean:
     rm -rf "~/.zsh"
