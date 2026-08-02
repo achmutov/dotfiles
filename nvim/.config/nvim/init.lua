@@ -400,6 +400,7 @@ local function plugins()
         { "<leader>w", mode = { "n", "v" } },
         --
         "<leader>vh",
+        "<leader>vH",
         "gd",
         "gf",
         "gs",
@@ -410,10 +411,10 @@ local function plugins()
       },
       cmd = "Telescope",
       config = function()
-        do
-          local actions = require("telescope.actions")
-          local action_state = require("telescope.actions.state")
+        local actions = require("telescope.actions")
+        local action_state = require("telescope.actions.state")
 
+        do
           --- @param esc boolean
           local function action_print_selected(esc)
             return function()
@@ -487,6 +488,21 @@ local function plugins()
         vim.keymap.set("n", "<leader>w", builtin.grep_string)
         vim.keymap.set("v", "<leader>w", builtin.grep_string)
         vim.keymap.set("n", "<leader>vh", builtin.help_tags)
+        vim.keymap.set("n", "<leader>vH", function()
+          builtin.help_tags({
+            attach_mappings = function(prompt_bufnr)
+              actions.select_default:replace(function()
+                local selection = action_state.get_selected_entry()
+                if selection == nil then
+                  return
+                end
+                actions.close(prompt_bufnr)
+                vim.cmd("help " .. selection.value .. " | only")
+              end)
+              return true
+            end,
+          })
+        end)
         vim.keymap.set("n", "gd", builtin.lsp_definitions)
         vim.keymap.set("n", "gf", builtin.lsp_type_definitions)
         vim.keymap.set("n", "gs", function()
