@@ -917,15 +917,10 @@ local function plugins()
   ---@type LazySpec
   local lang = {
     {
-      "iamcco/markdown-preview.nvim",
-      build = "cd app && npx yarn --frozen-lockfile",
-      init = function()
-        vim.g.mkdp_filetypes = { "markdown" }
-        vim.g.mkdp_auto_close = 0
-        vim.g.mkdp_preview_options = {
-          disable_sync_scroll = 1,
-        }
-      end,
+      "selimacerbas/markdown-preview.nvim",
+      dependencies = { "selimacerbas/live-server.nvim" },
+      keys = { { "<leader>M", "<cmd>MarkdownPreview<cr>" } },
+      opts = {},
       ft = "markdown",
     },
     {
