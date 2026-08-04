@@ -17,6 +17,16 @@ local wibox = require("wibox")
 
 local modkey = "Mod4"
 
+---@generic T: any
+---@param fn fun(...): T
+---@return  fun(): T
+local function wrap(fn, ...)
+  local vararg = { ... }
+  return function()
+    return fn(unpack(vararg))
+  end
+end
+
 local function error_handling()
   naughty.connect_signal("request::display_error", function(message, startup)
     ---@cast message string
@@ -628,21 +638,15 @@ local function setup_global_bindings()
   local screenshots = {
     {
       { { modkey }, "F1" },
-      function()
-        scrot_new("selection")
-      end,
+      wrap(scrot_new, "selection"),
     },
     {
       { { modkey }, "F2" },
-      function()
-        scrot_new("window")
-      end,
+      wrap(scrot_new, "window"),
     },
     {
       { { modkey }, "F3" },
-      function()
-        scrot_new("all")
-      end,
+      wrap(scrot_new, "all"),
     },
   }
   map_append(screenshots)
