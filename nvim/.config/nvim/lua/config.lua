@@ -1,32 +1,33 @@
+local auto = "__auto"
 local mason2lsp = {
-  ["clangd"] = "clangd",
+  ["clangd"] = auto,
   ["codelldb"] = nil,
   ["css-lsp"] = "cssls",
   ["debugpy"] = nil,
   ["docker-compose-language-service"] = "docker_compose_language_service",
   ["docker-language-server"] = "docker_language_server",
-  ["emmylua_ls"] = "emmylua_ls",
+  ["emmylua_ls"] = auto,
   ["eslint-lsp"] = "eslint",
   ["gh-actions-language-server"] = "gh_actions_ls",
-  ["gopls"] = "gopls",
+  ["gopls"] = auto,
   ["json-lsp"] = "jsonls",
   ["just-lsp"] = "just",
   ["neocmakelsp"] = "neocmake",
-  ["oxfmt"] = "oxfmt",
-  ["oxlint"] = "oxlint",
-  ["ruff"] = "ruff",
+  ["oxfmt"] = auto,
+  ["oxlint"] = auto,
+  ["ruff"] = auto,
   ["rust-analyzer"] = "rust_analyzer",
-  ["stylua"] = "stylua",
+  ["stylua"] = auto,
   ["tailwindcss-language-server"] = "tailwindcss",
-  ["tsgo"] = "tsgo",
-  ["ty"] = "ty",
+  ["tsgo"] = auto,
+  ["ty"] = auto,
   ["typos-lsp"] = "typos_lsp",
   ["vue-language-server"] = "vue_ls",
   ["yaml-language-server"] = "yamlls",
-  ["zls"] = "zls",
+  ["zls"] = auto,
 }
 -- ["lua-language-server"] = "lua_ls",
--- ["pyright"] = "pyright",
+-- ["pyright"] = SAME,
 -- ["typescript-language-server"] = "ts_ls",
 
 local treesitter = {
@@ -86,9 +87,9 @@ local treesitter = {
 
 local mason = vim.tbl_keys(mason2lsp)
 local lsp = vim
-  .iter(vim.tbl_values(mason2lsp))
-  :filter(function(lsp_name)
-    return lsp_name ~= nil
+  .iter(pairs(mason2lsp))
+  :map(function(mason_name, lsp_name)
+    return lsp_name == auto and mason_name or lsp_name
   end)
   :totable()
 
