@@ -268,12 +268,6 @@ local function setup_client_bindings()
         awful.client.floating.toggle,
       },
       {
-        { { modkey, "Control" }, "Return" },
-        function(c)
-          c:swap(awful.client.getmaster())
-        end,
-      },
-      {
         { { modkey }, "o" },
         function(c)
           c:move_to_screen()
@@ -302,13 +296,6 @@ local function setup_client_bindings()
         { { modkey, "Control" }, "m" },
         function(c)
           c.maximized_vertical = not c.maximized_vertical
-          c:raise()
-        end,
-      },
-      {
-        { { modkey, "Shift" }, "m" },
-        function(c)
-          c.maximized_horizontal = not c.maximized_horizontal
           c:raise()
         end,
       },
@@ -451,30 +438,6 @@ local function setup_global_bindings()
       wrap(awful.client.incwfact, 0.02),
     },
     {
-      { { modkey, "Shift" }, "h" },
-      function()
-        awful.tag.incnmaster(1, nil, true)
-      end,
-    },
-    {
-      { { modkey, "Shift" }, "l" },
-      function()
-        awful.tag.incnmaster(-1, nil, true)
-      end,
-    },
-    {
-      { { modkey, "Control" }, "h" },
-      function()
-        awful.tag.incncol(1, nil, true)
-      end,
-    },
-    {
-      { { modkey, "Control" }, "l" },
-      function()
-        awful.tag.incncol(-1, nil, true)
-      end,
-    },
-    {
       { { modkey }, "space" },
       wrap(awful.layout.inc, 1),
     },
@@ -498,26 +461,7 @@ local function setup_global_bindings()
   local awesome_utils = {
     {
       { { modkey }, "p" },
-      function()
-        menubar.show()
-      end,
-    },
-    {
-      { { modkey }, "r" },
-      function()
-        awful.screen.focused().mypromptbox:run()
-      end,
-    },
-    {
-      { { modkey }, "x" },
-      function()
-        awful.prompt.run({
-          prompt = "Run Lua code: ",
-          textbox = awful.screen.focused().mypromptbox.widget,
-          exe_callback = awful.util.eval,
-          history_path = awful.util.get_cache_dir() .. "/history_eval",
-        })
-      end,
+      menubar.show,
     },
   }
   map_append(awesome_utils)
