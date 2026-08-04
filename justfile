@@ -67,20 +67,32 @@ zsh-clean:
 # PKGS #
 ########
 
+export CARGO_TARGET_DIR := x"$HOME/.cache/cargo-install"
 rust:
     cargo install --locked ripgrep --features pcre2
     cargo install --locked \
         alacritty          \
         cargo-expand       \
         du-dust            \
+        emmylua_ls         \
         fd-find            \
         fnm                \
         just               \
+        just-lsp           \
+        neocmakelsp        \
+        prek               \
+        ruff               \
         selene             \
+        stylua             \
+        taplo              \
         trippy             \
+        typos-lsp          \
         uv                 \
         yazi-build
     # sudo setcap CAP_NET_RAW+p $(which trip)
+
+_rust PACKAGE:
+    cargo install --locked {{ PACKAGE }}
 
 go:
     #!/usr/bin/env sh
