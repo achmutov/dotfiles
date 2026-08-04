@@ -2,6 +2,7 @@ stow:
     stow -t ~      \
         alacritty  \
         awesome    \
+        mpv        \
         nvim       \
         perfconfig \
         picom      \
