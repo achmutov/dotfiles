@@ -11,6 +11,7 @@ local mason2lsp = {
   ["json-lsp"] = "jsonls",
   ["just-lsp"] = "just",
   ["lua-language-server"] = "lua_ls",
+  ["neocmakelsp"] = "neocmake",
   ["oxfmt"] = "oxfmt",
   ["oxlint"] = "oxlint",
   ["pyright"] = "pyright",
@@ -18,12 +19,11 @@ local mason2lsp = {
   ["rust-analyzer"] = "rust_analyzer",
   ["stylua"] = "stylua",
   ["tailwindcss-language-server"] = "tailwindcss",
+  ["tsgo"] = "tsgo",
   ["typescript-language-server"] = "ts_ls",
   ["typos-lsp"] = "typos_lsp",
   ["vue-language-server"] = "vue_ls",
   ["yaml-language-server"] = "yamlls",
-  ["tsgo"] = "tsgo",
-  ["neocmakelsp"] = "neocmake",
   ["zls"] = "zls",
 }
 
