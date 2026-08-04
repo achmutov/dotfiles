@@ -18,12 +18,12 @@ clean: tmux-clean zsh-clean
 
 clone-or-pull REPO DIR:
     #!/usr/bin/env sh
-    if [ -d "{{DIR}}" ]; then
-        pushd {{DIR}}
+    if [ -d "{{ DIR }}" ]; then
+        pushd {{ DIR }}
         git pull
         popd
     else
-        git clone {{REPO}} {{DIR}}
+        git clone {{ REPO }} {{ DIR }}
     fi
 
 ########
