@@ -19,6 +19,16 @@ local function lazy_setup()
 end
 lazy_setup()
 
+---@generic T: any
+---@param fn fun(...): T
+---@return  fun(): T
+local function wrap(fn, ...)
+  local vararg = { ... }
+  return function()
+    return fn(unpack(vararg))
+  end
+end
+
 local function core_opts()
   vim.g.mapleader = " "
 
@@ -336,12 +346,10 @@ local function plugins()
     },
     {
       "nvim-lualine/lualine.nvim",
-      config = function()
-        require("lualine").setup({
-          options = { theme = "gruvbox_dark" },
-          sections = { lualine_c = { { "filename", path = 1 } } },
-        })
-      end,
+      opts = {
+        options = { theme = "gruvbox_dark" },
+        sections = { lualine_c = { { "filename", path = 1 } } },
+      },
     },
   }
 
@@ -372,9 +380,7 @@ local function plugins()
 
   ---@type LazySpec
   local navigation = {
-    {
-      "Bekaboo/dropbar.nvim",
-    },
+    "Bekaboo/dropbar.nvim",
     {
       "nvim-telescope/telescope-fzf-native.nvim",
       lazy = true,
@@ -536,17 +542,12 @@ local function plugins()
       config = function()
         local mark = require("harpoon.mark")
         local ui = require("harpoon.ui")
-        local function nav_file(id)
-          return function()
-            ui.nav_file(id)
-          end
-        end
         vim.keymap.set("n", "<leader>a", mark.add_file)
         vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu)
-        vim.keymap.set("n", "<C-h>", nav_file(1))
-        vim.keymap.set("n", "<C-t>", nav_file(2))
-        vim.keymap.set("n", "<C-n>", nav_file(3))
-        vim.keymap.set("n", "<C-s>", nav_file(4))
+        vim.keymap.set("n", "<C-h>", wrap(ui.nav_file, 1))
+        vim.keymap.set("n", "<C-t>", wrap(ui.nav_file, 2))
+        vim.keymap.set("n", "<C-n>", wrap(ui.nav_file, 3))
+        vim.keymap.set("n", "<C-s>", wrap(ui.nav_file, 4))
       end,
     },
     {
@@ -675,9 +676,7 @@ local function plugins()
 
   ---@type LazySpec
   local git = {
-    {
-      "tpope/vim-fugitive",
-    },
+    "tpope/vim-fugitive",
     {
       "ruifm/gitlinker.nvim",
       keys = { { "<leader>gy", mode = { "n", "v" } } },
@@ -1067,12 +1066,7 @@ local function plugins()
     },
     {
       "jmbuhr/otter.nvim",
-      keys = { "<leader>m" },
-      config = function()
-        vim.keymap.set("n", "<leader>m", function()
-          require("otter").activate()
-        end)
-      end,
+      keys = { { "<leader>m", "<cmd>OtterActivate<cr>" } },
     },
   }
 
