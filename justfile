@@ -109,3 +109,7 @@ node:
 lua:
     luarocks install --local \
         luacheck
+
+py:
+    uv tool install debugpy
+    uv tool install ty
