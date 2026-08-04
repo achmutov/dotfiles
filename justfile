@@ -1,15 +1,16 @@
 stow:
-    stow -t ~     \
-        alacritty \
-        awesome   \
-        nvim      \
-        picom     \
-        scripts   \
-        stylua    \
-        tmux      \
-        trippy    \
-        yazi      \
-        zathura   \
+    stow -t ~      \
+        alacritty  \
+        awesome    \
+        nvim       \
+        perfconfig \
+        picom      \
+        scripts    \
+        stylua     \
+        tmux       \
+        trippy     \
+        yazi       \
+        zathura    \
         zsh
 
 install: nvim tmux zsh
