@@ -2,7 +2,7 @@ PREFERRED_FORMATTER = {}
 
 local function lazy_setup()
   local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-  if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  if not vim.uv.fs_stat(lazypath) then
     local lazyrepo = "https://github.com/folke/lazy.nvim.git"
     local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
     if vim.v.shell_error ~= 0 then
@@ -55,7 +55,7 @@ local function core_opts()
   -- persistence
   vim.o.swf = false
   vim.o.bk = false
-  vim.o.udir = vim.fn.expand("~/.vim/undodir")
+  vim.o.udir = vim.fn.stdpath("state") .. "/undodir"
   vim.o.udf = true
 
   -- search
@@ -151,7 +151,7 @@ local custom_ft_to_native = {
 local function autocommands()
   vim.api.nvim_create_autocmd("BufEnter", {
     callback = function()
-      local path = vim.fn.expand("%:p")
+      local path = vim.fn.expand("%:p") --[[@as string]]
       if vim.fn.isdirectory(path) ~= 0 then
         if require("neogit.lib.git.cli").is_inside_worktree(path) then
           vim.cmd("Neogit cwd=" .. path)
@@ -204,17 +204,21 @@ local function autocommands()
     pattern = "TSUpdate",
     callback = function()
       local parsers = require("nvim-treesitter.parsers")
-      parsers.resc = {
-        install_info = {
-          url = "https://github.com/achmutov/tree-sitter-resc",
-          revision = "c7a7a3f2716c0dbe305cbde566406faa279f7402",
-          generate_from_json = false,
-          path = "/home/doc/dev/achmutov/tree-sitter-resc",
-          generate = true,
-          queries = "queries",
+      ---@type nvim-ts.parsers
+      local custom_parsers = {
+        resc = {
+          install_info = {
+            url = "https://github.com/achmutov/tree-sitter-resc",
+            revision = "c7a7a3f2716c0dbe305cbde566406faa279f7402",
+            generate_from_json = false,
+            path = "/home/doc/dev/achmutov/tree-sitter-resc",
+            generate = true,
+            queries = "queries",
+          },
+          tier = 2,
         },
-        tier = 2,
       }
+      vim.tbl_extend("error", parsers, custom_parsers)
     end,
   })
 
@@ -241,6 +245,8 @@ end
 autocommands()
 
 local function plugins()
+  ---@alias LazySpec_ (string|LazyPluginSpec)[]
+
   ---@alias Colorscheme
   ---| "gruvbox"
   ---| "koda"
@@ -252,7 +258,7 @@ local function plugins()
   ---@type Colorscheme
   local colorscheme = "zenbones:zenwritten"
 
-  ---@type LazySpec
+  ---@type LazySpec_
   local appearance = {
     "nvim-tree/nvim-web-devicons",
     {
@@ -280,6 +286,7 @@ local function plugins()
       priority = 1000,
       dependencies = { "xiyaowong/transparent.nvim" },
       config = function()
+        ---@diagnostic disable-next-line: missing-fields, param-type-mismatch
         require("kanagawa").setup({
           commentStyle = { italic = false },
           keywordStyle = { italic = false },
@@ -353,7 +360,7 @@ local function plugins()
     },
   }
 
-  ---@type LazySpec
+  ---@type LazySpec_
   local core = {
     "Pocco81/auto-save.nvim",
     {
@@ -378,7 +385,7 @@ local function plugins()
     },
   }
 
-  ---@type LazySpec
+  ---@type LazySpec_
   local navigation = {
     "Bekaboo/dropbar.nvim",
     {
@@ -414,7 +421,7 @@ local function plugins()
         "<leader>r",
         "<leader>i",
         "<leader>d",
-      },
+      } --[[@as (LazyKeysSpec[])]],
       cmd = "Telescope",
       config = function()
         local actions = require("telescope.actions")
@@ -426,9 +433,9 @@ local function plugins()
             return function()
               local entry = action_state.get_selected_entry()
               local ordinal = entry[1] or entry.ordinal
+              ---@diagnostic disable-next-line: unnecessary-if
               if ordinal then
                 _ = esc and vim.api.nvim_input("<esc>")
-                print(ordinal)
               end
             end
           end
@@ -563,6 +570,7 @@ local function plugins()
         { "<leader>pd", ":Neotree document_symbols toggle<CR>" },
       },
       config = function()
+        ---@diagnostic disable-next-line: missing-fields
         require("neo-tree").setup({
           sources = { "filesystem", "buffers", "git_status", "document_symbols" },
           filesystem = { hijack_netrw_behavior = "open_current" },
@@ -631,6 +639,7 @@ local function plugins()
     {
       "folke/flash.nvim",
       event = "VeryLazy",
+      ---@diagnostic disable-next-line: missing-fields
       ---@type Flash.Config
       opts = { modes = { char = { enabled = false } } },
       keys = {
@@ -638,21 +647,21 @@ local function plugins()
           "s",
           mode = { "n", "x", "o" },
           function()
-            require("flash").jump()
+            require("flash.commands").jump()
           end,
         },
         {
           "Y",
           mode = { "n", "x", "o" },
           function()
-            require("flash").treesitter()
+            require("flash.commands").treesitter()
           end,
         },
         {
           "R",
           mode = { "o", "x" },
           function()
-            require("flash").treesitter_search()
+            require("flash.commands").treesitter_search()
           end,
         },
         --
@@ -660,21 +669,21 @@ local function plugins()
           "r",
           mode = "o",
           function()
-            require("flash").remote()
+            require("flash.commands").remote()
           end,
         },
         {
           "<c-s>",
           mode = { "c" },
           function()
-            require("flash").toggle()
+            require("flash.commands").toggle()
           end,
         },
       },
     },
   }
 
-  ---@type LazySpec
+  ---@type LazySpec_
   local git = {
     "tpope/vim-fugitive",
     {
@@ -724,6 +733,7 @@ local function plugins()
           graph_style = "unicode",
           process_spinner = true,
           highlight = { bg1 = "" },
+          ---@diagnostic disable-next-line: assign-type-mismatch, missing-fields
           integrations = {
             telescope = true,
             codediff = true,
@@ -757,7 +767,7 @@ local function plugins()
     },
   }
 
-  ---@type LazySpec
+  ---@type LazySpec_
   local misc = {
     {
       "RRethy/vim-illuminate",
@@ -765,7 +775,7 @@ local function plugins()
         {
           "<leader>o",
           function()
-            local illuminate = package.loaded.illuminate
+            local illuminate = require("illuminate")
             local engine = require("illuminate.engine")
             if illuminate.is_paused() then
               illuminate.resume()
@@ -808,7 +818,7 @@ local function plugins()
   }
   vim.keymap.set("n", "<leader>ng", vim.cmd.Neogen)
 
-  ---@type LazySpec
+  ---@type LazySpec_
   local cmp = {
     {
       "saghen/blink.cmp",
@@ -820,6 +830,7 @@ local function plugins()
         "L3MON4D3/LuaSnip",
       },
       config = function()
+        ---@diagnostic disable: missing-fields, param-type-mismatch
         require("blink-cmp").setup({
           keymap = {
             preset = "default",
@@ -840,7 +851,7 @@ local function plugins()
                         local dev_icon, _ = require("nvim-web-devicons").get_icon(ctx.label)
                         icon = dev_icon or icon
                       else
-                        icon = require("lspkind").symbolic(ctx.kind, { mode = "symbol" })
+                        icon = require("lspkind").symbolic(ctx.kind)
                       end
                       return icon .. ctx.icon_gap
                     end,
@@ -870,6 +881,7 @@ local function plugins()
           sources = { default = { "lsp", "path", "snippets", "buffer" } },
           signature = { enabled = true },
         })
+        ---@diagnostic enable: missing-fields, param-type-mismatch
       end,
     },
     {
@@ -878,7 +890,7 @@ local function plugins()
     },
   }
 
-  ---@type LazySpec
+  ---@type LazySpec_
   local lsp = {
     {
       "j-hui/fidget.nvim",
@@ -906,14 +918,13 @@ local function plugins()
         "MasonInstallAll",
       },
       config = function()
-        require("mason").setup({
-          PATH = "skip",
-        })
+        ---@diagnostic disable-next-line: missing-fields, param-type-mismatch
+        require("mason").setup({ PATH = "skip" })
       end,
     },
   }
 
-  ---@type LazySpec
+  ---@type LazySpec_
   local lang = {
     {
       "selimacerbas/markdown-preview.nvim",
@@ -943,7 +954,7 @@ local function plugins()
     },
   }
 
-  ---@type LazySpec
+  ---@type LazySpec_
   local debugging = {
     {
       "mfussenegger/nvim-dap",
@@ -966,7 +977,8 @@ local function plugins()
         vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint)
         vim.keymap.set("n", "<leader>B", telescope_dap.breakpoints)
         vim.keymap.set("n", "<leader>?", function()
-          ui.eval(nil, { enter = true }) ---@diagnostic disable-line: missing-fields
+          ---@diagnostic disable-next-line: missing-fields, param-type-mismatch
+          ui.eval(nil, { enter = true })
         end)
         vim.keymap.set("n", "<leader><F1>", dap.continue)
         vim.keymap.set("n", "<leader><F2>", dap.step_into)
@@ -1048,8 +1060,8 @@ local function plugins()
 
         dap.listeners.before.attach.dapui_config = ui.open
         dap.listeners.before.launch.dapui_config = ui.open
-        dap.listeners.before.event_terminated.dapui_config = ui.close
-        dap.listeners.before.event_exited.dapui_config = ui.close
+        dap.listeners.before.event_terminated.dapui_config = wrap(ui.close)
+        dap.listeners.before.event_exited.dapui_config = wrap(ui.close)
 
         _ = pcall(vim.cmd.so, dapfile) and vim.notify("Imported " .. dapfile)
       end,
@@ -1070,14 +1082,9 @@ local function plugins()
     },
   }
 
-  local spec = {}
-  for _, spec_part in ipairs({ appearance, core, navigation, git, misc, cmp, lsp, lang, debugging }) do
-    assert(type(spec_part) ~= "string", "invalid state")
-    vim.list_extend(spec, spec_part)
-  end
-
+  ---@diagnostic disable-next-line: param-type-mismatch
   require("lazy").setup({
-    spec = spec,
+    spec = { appearance, core, navigation, git, misc, cmp, lsp, lang, debugging },
     change_detection = { notify = false },
     performance = {
       rtp = {
