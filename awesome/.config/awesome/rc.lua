@@ -326,9 +326,7 @@ local function setup_global_bindings()
   local core = {
     {
       { { modkey }, "Return" },
-      function()
-        awful.spawn(terminal_cmd)
-      end,
+      wrap(awful.spawn.spawn, terminal_cmd),
     },
     {
       { { modkey, "Control" }, "r" },
@@ -344,15 +342,11 @@ local function setup_global_bindings()
   local client_navigation = {
     {
       { { modkey }, "j" },
-      function()
-        awful.client.focus.byidx(1)
-      end,
+      wrap(awful.client.focus.byidx, 1),
     },
     {
       { { modkey }, "k" },
-      function()
-        awful.client.focus.byidx(-1)
-      end,
+      wrap(awful.client.focus.byidx, -1),
     },
     {
       { { modkey }, "u" },
@@ -422,15 +416,11 @@ local function setup_global_bindings()
   local screen_navigation = {
     {
       { { modkey, "Control" }, "j" },
-      function()
-        awful.screen.focus_relative(1)
-      end,
+      wrap(awful.screen.focus_relative, 1),
     },
     {
       { { modkey, "Control" }, "k" },
-      function()
-        awful.screen.focus_relative(-1)
-      end,
+      wrap(awful.screen.focus_relative, -1),
     },
   }
   map_append(screen_navigation)
@@ -438,39 +428,27 @@ local function setup_global_bindings()
   local layout_manipulation = {
     {
       { { modkey, "Shift" }, "j" },
-      function()
-        awful.client.swap.byidx(1)
-      end,
+      wrap(awful.client.swap.byidx, 1),
     },
     {
       { { modkey, "Shift" }, "k" },
-      function()
-        awful.client.swap.byidx(-1)
-      end,
+      wrap(awful.client.swap.byidx, -1),
     },
     {
       { { modkey }, "l" },
-      function()
-        awful.tag.incmwfact(0.01)
-      end,
+      wrap(awful.tag.incmwfact, 0.01),
     },
     {
       { { modkey }, "h" },
-      function()
-        awful.tag.incmwfact(-0.01)
-      end,
+      wrap(awful.tag.incmwfact, -0.01),
     },
     {
       { { modkey }, "[" },
-      function()
-        awful.client.incwfact(-0.02)
-      end,
+      wrap(awful.client.incwfact, -0.02),
     },
     {
       { { modkey }, "]" },
-      function()
-        awful.client.incwfact(0.02)
-      end,
+      wrap(awful.client.incwfact, 0.02),
     },
     {
       { { modkey, "Shift" }, "h" },
@@ -498,15 +476,11 @@ local function setup_global_bindings()
     },
     {
       { { modkey }, "space" },
-      function()
-        awful.layout.inc(1)
-      end,
+      wrap(awful.layout.inc, 1),
     },
     {
       { { modkey, "Shift" }, "space" },
-      function()
-        awful.layout.inc(-1)
-      end,
+      wrap(awful.layout.inc, -1),
     },
     {
       { { modkey, "Control" }, "n" },
