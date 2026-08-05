@@ -567,7 +567,6 @@ local function plugins()
       cmd = "Neotree",
       keys = {
         { "<leader>pv", ":Neotree toggle<CR>" },
-        { "<leader>pd", ":Neotree document_symbols toggle<CR>" },
       },
       config = function()
         ---@diagnostic disable-next-line: missing-fields
@@ -937,6 +936,17 @@ local function plugins()
         ---@diagnostic disable-next-line: missing-fields, param-type-mismatch
         require("mason").setup({ PATH = "skip" })
       end,
+    },
+    {
+      "hedyhli/outline.nvim",
+      lazy = true,
+      cmd = { "Outline", "OutlineOpen" },
+      keys = { { "<leader>pd", "<cmd>Outline<CR>" } },
+      opts = {
+        outline_window = { position = "left" },
+        outline_items = { show_symbol_lineno = true },
+        symbols = { icon_source = "lspkind" },
+      },
     },
   }
 
