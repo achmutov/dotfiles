@@ -222,19 +222,6 @@ local function autocommands()
     end,
   })
 
-  vim.api.nvim_create_autocmd("ColorScheme", {
-    pattern = "photon",
-    callback = function()
-      vim.api.nvim_set_hl(0, "NonText", {})
-      vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#1b3027", fg = "#87af87" })
-      vim.api.nvim_set_hl(0, "DiffChange", { bg = "#242D30" })
-      vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#301F23" })
-      vim.api.nvim_set_hl(0, "GitSignsAdd", { bg = "NONE", fg = "#b8bb26" })
-      vim.api.nvim_set_hl(0, "GitSignsChange", { bg = "NONE", fg = "#83a598" })
-      vim.api.nvim_set_hl(0, "GitSignsDelete", { bg = "NONE", fg = "#fb4934" })
-    end,
-  })
-
   vim.api.nvim_create_autocmd("BufNewFile", {
     nested = true,
     callback = function()
@@ -250,92 +237,83 @@ local function plugins()
   ---@alias Colorscheme
   ---| "gruvbox"
   ---| "koda"
-  ---| "kanagawa"
-  ---| "photon"
+  ---| "kanagawa:wave"
+  ---| "kanagawa:dragon"
   ---| "zenbones:zenwritten"
   ---| "zenbones:kanagawabones"
-  ---| "moonfly"
+  ---| "vesper"
   ---@type Colorscheme
-  local colorscheme = "zenbones:zenwritten"
+  local colorscheme = "vesper"
+  local colorscheme_transparent = true
+  local colorscheme_deps = colorscheme_transparent and { "xiyaowong/transparent.nvim" } or {}
+  local colorscheme_priority = 1000
+  local function lazy_colorscheme(other)
+    return colorscheme:match(other) == nil
+  end
 
   ---@type LazySpec_
   local appearance = {
     "nvim-tree/nvim-web-devicons",
+    { "xiyaowong/transparent.nvim", lazy = true },
     {
       "sainnhe/gruvbox-material",
-      priority = 1000,
-      dependencies = { "xiyaowong/transparent.nvim" },
-      lazy = (colorscheme ~= "gruvbox"),
+      lazy = lazy_colorscheme("gruvbox"),
+      priority = colorscheme_priority,
+      dependencies = colorscheme_deps,
       config = function()
-        vim.g.gruvbox_material_transparent_background = 1
+        vim.g.gruvbox_material_transparent_background = colorscheme_transparent
         vim.cmd.colo("gruvbox-material")
       end,
     },
     {
       "oskarnurm/koda.nvim",
-      lazy = (colorscheme ~= "koda"),
-      priority = 1000,
-      dependencies = { "xiyaowong/transparent.nvim" },
+      lazy = lazy_colorscheme("koda"),
+      priority = colorscheme_priority,
+      dependencies = colorscheme_deps,
       config = function()
+        require("koda").setup({ transparent = colorscheme_transparent })
         vim.cmd.colo("koda")
       end,
     },
     {
       "rebelot/kanagawa.nvim",
-      lazy = (colorscheme ~= "kanagawa"),
-      priority = 1000,
-      dependencies = { "xiyaowong/transparent.nvim" },
+      lazy = lazy_colorscheme("^kanagawa:"),
+      priority = colorscheme_priority,
+      dependencies = colorscheme_deps,
       config = function()
         ---@diagnostic disable-next-line: missing-fields, param-type-mismatch
         require("kanagawa").setup({
           commentStyle = { italic = false },
           keywordStyle = { italic = false },
+          transparent = colorscheme_transparent,
           ---@param colors KanagawaColors
           overrides = function(colors)
             local theme = colors.theme
             return { ["@variable.builtin"] = { fg = theme.syn.special2, italic = false } }
           end,
         })
-        vim.cmd.colo("kanagawa-dragon")
+        local colorscheme_name = colorscheme:gsub(":", "-")
+        vim.cmd.colo(colorscheme_name)
       end,
     },
-    {
-      "axvr/photon.vim",
-      lazy = (colorscheme ~= "photon"),
-      priority = 1000,
-      dependencies = { "xiyaowong/transparent.nvim" },
-      config = function()
-        -- TODO:
-        -- * floating windows
-        -- * indent-blankline
-        -- * blink
-        -- * virtual text
-        vim.cmd.colo("photon")
-      end,
-    },
+    { "rktjmp/lush.nvim", lazy = true },
     {
       "zenbones-theme/zenbones.nvim",
-      lazy = (colorscheme:match("^zenbones:") == nil),
-      priority = 1000,
-      dependencies = { "xiyaowong/transparent.nvim", "rktjmp/lush.nvim" },
+      lazy = lazy_colorscheme("^zenbones:"),
+      priority = colorscheme_priority,
+      dependencies = colorscheme_transparent and vim.list_extend({ "rktjmp/lush.nvim" }, colorscheme_deps) or nil,
       init = function()
-        vim.g.zenwritten = { transparent_background = 1 }
-        vim.g.kanagawabones = { transparent_background = 1 }
+        ---@diagnostic disable-next-line: unnecessary-if
+        if colorscheme_transparent then
+          vim.g.zenwritten = { transparent_background = 1 }
+          vim.g.kanagawabones = { transparent_background = 1 }
+        else
+          vim.g.zenwritten_compat = 1
+          vim.g.kanagawabones_compat = 1
+        end
       end,
       config = function()
         vim.cmd.colo(colorscheme:sub(("zenbones:"):len() + 1))
-      end,
-    },
-    {
-      "bluz71/vim-moonfly-colors",
-      name = "moonfly",
-      priority = 1000,
-      lazy = (colorscheme ~= "moonfly"),
-      init = function()
-        vim.g.moonflyTransparent = true
-      end,
-      config = function()
-        vim.cmd.colo("moonfly")
       end,
     },
     {
@@ -350,6 +328,28 @@ local function plugins()
           highlights = { "BlinkIndentScope" },
         },
       },
+    },
+    {
+      "datsfilipe/vesper.nvim",
+      lazy = lazy_colorscheme("vesper"),
+      priority = colorscheme_priority,
+      dependencies = colorscheme_deps,
+      config = function()
+        require("vesper").setup({
+          transparent = colorscheme_transparent,
+          italics = {
+            comments = true,
+            keywords = false,
+            functions = false,
+            strings = false,
+            variables = false,
+          },
+          overrides = {
+            NonText = { fg = require("vesper.colors").comment },
+          },
+        })
+        vim.cmd.colo(colorscheme)
+      end,
     },
     {
       "nvim-lualine/lualine.nvim",
