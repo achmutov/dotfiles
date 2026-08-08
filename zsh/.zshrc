@@ -34,6 +34,8 @@ cmp-to-clip() { xclip -sel c <<< "$BUFFER" }
 zle -N cmp-to-clip
 bindkey '^Y' cmp-to-clip
 
+bindkey '^U' backward-kill-line
+
 ###########
 # Plugins #
 ###########
