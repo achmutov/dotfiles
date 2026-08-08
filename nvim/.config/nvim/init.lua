@@ -317,17 +317,11 @@ local function plugins()
       end,
     },
     {
-      "saghen/blink.indent",
-      opts = {
-        dedent_scoped_filetypes = { robot = true },
-        mappings = {
-          object_scope = "is",
-          object_scope_with_border = "as",
-        },
-        scope = {
-          highlights = { "BlinkIndentScope" },
-        },
-      },
+      "lukas-reineke/indent-blankline.nvim",
+      main = "ibl",
+      ---@module "ibl"
+      ---@type ibl.config
+      opts = {},
     },
     {
       "datsfilipe/vesper.nvim",
