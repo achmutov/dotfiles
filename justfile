@@ -113,5 +113,5 @@ lua:
         luacheck
 
 py:
-    uv tool install debugpy
-    uv tool install ty
+    uv tool install -U debugpy
+    uv tool install -U ty
