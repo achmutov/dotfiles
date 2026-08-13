@@ -469,21 +469,15 @@ local function setup_global_bindings()
   local volume = {
     {
       { {}, "XF86AudioLowerVolume" },
-      function()
-        awful.spawn.with_shell("pactl -- set-sink-volume @DEFAULT_SINK@ -10%")
-      end,
+      wrap(awful.spawn.with_shell, "pactl -- set-sink-volume @DEFAULT_SINK@ -10%"),
     },
     {
       { {}, "XF86AudioRaiseVolume" },
-      function()
-        awful.spawn.with_shell("pactl -- set-sink-volume @DEFAULT_SINK@ +10%")
-      end,
+      wrap(awful.spawn.with_shell, "pactl -- set-sink-volume @DEFAULT_SINK@ +10%"),
     },
     {
       { {}, "XF86AudioMute" },
-      function()
-        awful.spawn.with_shell("pactl set-sink-mute @DEFAULT_SINK@ toggle")
-      end,
+      wrap(awful.spawn.with_shell, "pactl set-sink-mute @DEFAULT_SINK@ toggle"),
     },
   }
   map_append(volume)
@@ -491,15 +485,11 @@ local function setup_global_bindings()
   local brightness = {
     {
       { {}, "XF86MonBrightnessDown" },
-      function()
-        awful.util.spawn("xbacklight -dec 10")
-      end,
+      wrap(awful.util.spawn, "xbacklight -dec 10"),
     },
     {
       { {}, "XF86MonBrightnessUp" },
-      function()
-        awful.util.spawn("xbacklight -inc 10")
-      end,
+      wrap(awful.util.spawn, "xbacklight -inc 10"),
     },
   }
   map_append(brightness)
@@ -507,15 +497,11 @@ local function setup_global_bindings()
   local utils = {
     {
       { { modkey }, "b" },
-      function()
-        awful.spawn.with_shell(browser_cmd)
-      end,
+      wrap(awful.spawn.with_shell, browser_cmd),
     },
     {
       { { modkey, "Ctrl" }, "l" },
-      function()
-        awful.spawn.with_shell(lock_screen_cmd)
-      end,
+      wrap(awful.spawn.with_shell, lock_screen_cmd),
     },
   }
   map_append(utils)
