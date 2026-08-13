@@ -1,5 +1,6 @@
 stow:
     stow -t ~      \
+        X11        \
         alacritty  \
         awesome    \
         mpv        \
