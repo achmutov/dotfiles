@@ -693,6 +693,10 @@ local function plugins()
         { "<leader>gc", "<cmd>CodeDiff<cr>" },
       },
       cmd = "CodeDiff",
+      opts = {
+        diff = { jump_to_first_change = false },
+        explorer = { initial_focus = "modified" },
+      },
     },
     {
       "barrettruth/diffs.nvim",
