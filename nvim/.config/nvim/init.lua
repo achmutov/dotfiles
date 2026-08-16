@@ -942,6 +942,7 @@ local function plugins()
         outline_window = { position = "left" },
         outline_items = { show_symbol_lineno = true },
         symbols = { icon_source = "lspkind" },
+        keymaps = { close = {} },
       },
     },
   }
