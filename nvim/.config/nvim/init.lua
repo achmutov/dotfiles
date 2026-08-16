@@ -470,9 +470,7 @@ local function plugins()
               ),
             }
           end
-          vim.keymap.set("n", "<leader>pf", function()
-            builtin.find_files(find_files_opts)
-          end)
+          vim.keymap.set("n", "<leader>pf", wrap(builtin.find_files, find_files_opts))
         end
         vim.keymap.set("n", "<C-p>", function()
           if vim.bo.filetype ~= "TelescopePrompt" then
@@ -486,7 +484,7 @@ local function plugins()
           })
         end)
         vim.keymap.set("n", "<leader>ps", function()
-          builtin.live_grep({ additional_args = { "--hidden" } })
+          builtin.live_grep({ hidden = true, additional_args = { "-g", "!.git" } })
         end)
         vim.keymap.set("n", "<leader>pr", builtin.resume)
         vim.keymap.set("n", "<leader>pt", builtin.treesitter)
