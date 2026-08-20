@@ -975,6 +975,10 @@ local function plugins()
       end,
       ft = "tex",
     },
+    {
+      "https://github.com/gentoo/gentoo-syntax",
+      ft = { "gentoo-*", "ebuild" },
+    },
   }
 
   ---@type LazySpec_
