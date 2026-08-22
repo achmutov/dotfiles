@@ -71,28 +71,48 @@ zsh-clean:
 ########
 
 export CARGO_TARGET_DIR := x"$HOME/.cache/cargo-install"
-rust:
+
+rust: rust-core rust-dev-utils rust-dev-pm rust-dev-editor rust-misc-utils
+
+rust-core:
     cargo install --locked ripgrep --features pcre2
     cargo install --locked \
         alacritty          \
-        cargo-expand       \
-        du-dust            \
-        emmylua_ls         \
         fd-find            \
-        fnm                \
         just               \
+        starship           \
+        tree-sitter-cli    \
+        yazi-build
+
+rust-dev-utils:
+    cargo install --locked \
+        cargo-expand       \
+        hexyl              \
+        hyperfine          \
+        prek
+
+rust-dev-pm:
+    cargo install --locked \
+        bob-nvim           \
+        fnm                \
+        uv
+
+rust-dev-editor:
+    cargo install --locked \
+        emmylua_ls         \
         just-lsp           \
         neocmakelsp        \
-        prek               \
         ruff               \
         selene             \
         stylua             \
-        taplo              \
-        trippy             \
-        typos-lsp          \
-        uv                 \
-        yazi-build
-    # sudo setcap CAP_NET_RAW+p $(which trip)
+        taplo-cli          \
+        typos-lsp
+
+rust-misc-utils:
+    cargo install --locked \
+        du-dust            \
+        emlop              \
+        trippy
 
 _rust PACKAGE:
     cargo install --locked {{ PACKAGE }}
