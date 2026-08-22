@@ -953,7 +953,16 @@ local function plugins()
       "selimacerbas/markdown-preview.nvim",
       dependencies = { "selimacerbas/live-server.nvim" },
       keys = { { "<leader>M", "<cmd>MarkdownPreview<cr>" } },
-      opts = {},
+      opts = {
+        hooks = {
+          on_start = function(url)
+            print("Preview started: " .. url)
+          end,
+          on_stop = function()
+            print("Preview stopped")
+          end,
+        },
+      },
       ft = "markdown",
     },
     {
