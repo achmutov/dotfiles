@@ -1094,6 +1094,18 @@ local function plugins()
           })
         end
 
+        dap.adapters.cmake = {
+          type = "pipe",
+          pipe = "${pipe}",
+          executable = {
+            command = "sh",
+            args = {
+              "-c",
+              "cmake --debugger --debugger-pipe=${pipe}",
+            },
+          },
+        }
+
         dap.listeners.before.attach.dapui_config = ui.open
         dap.listeners.before.launch.dapui_config = ui.open
         dap.listeners.before.event_terminated.dapui_config = wrap(ui.close)
