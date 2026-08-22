@@ -697,24 +697,11 @@ local function plugins()
       },
     },
     {
-      "barrettruth/diffs.nvim",
-      -- lazy = true,
-      -- cmd = { "Gdiff", "Gvdiff", "Ghdiff" },
-      init = function()
-        vim.g.diffs = {
-          integrations = {
-            neogit = true,
-          },
-        }
-      end,
-    },
-    {
       "https://github.com/NeogitOrg/neogit",
       dependencies = {
         "nvim-telescope/telescope.nvim",
         "esmuellert/codediff.nvim",
         "nvim-lua/plenary.nvim",
-        "barrettruth/diffs.nvim",
       },
       cmd = "Neogit",
       keys = {
@@ -723,6 +710,7 @@ local function plugins()
       config = function()
         local neogit = require("neogit")
         neogit.setup({
+          treesitter_diff_highlight = true,
           disable_hint = true,
           disable_context_highlighting = true,
           graph_style = "unicode",
@@ -734,6 +722,8 @@ local function plugins()
             codediff = true,
           },
         })
+        vim.api.nvim_set_hl(0, "NeogitDiffDelete", { link = "NeogitDiffDeleteHighlight" })
+        vim.api.nvim_set_hl(0, "NeogitDiffAdd", { link = "NeogitDiffAddHighlight" })
       end,
     },
     {
