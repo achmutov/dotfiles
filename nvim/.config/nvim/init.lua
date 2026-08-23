@@ -184,8 +184,10 @@ local function autocommands()
         return
       end
       local name = custom_ft_to_native[ev.match] or ev.match
-      require("nvim-treesitter").install(name)
-      pcall(vim.treesitter.start)
+      if require("nvim-treesitter.parsers")[name] then
+        require("nvim-treesitter").install(name)
+        pcall(vim.treesitter.start)
+      end
     end,
   })
 
