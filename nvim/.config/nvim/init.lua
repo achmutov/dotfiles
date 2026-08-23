@@ -1140,7 +1140,7 @@ plugins()
 
 local function user_commands()
   vim.api.nvim_create_user_command("TSInstallAll", function()
-    require("nvim-treesitter").install(require("config").treesitter):wait()
+    require("nvim-treesitter").install(require("achmutov.treesitter")):wait()
   end, {})
 
   vim.api.nvim_create_user_command("MasonInstallAll", function()
