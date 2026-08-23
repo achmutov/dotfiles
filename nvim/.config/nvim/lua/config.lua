@@ -12,6 +12,7 @@ local mason2lsp = {
   ["docker-language-server"] = T.lsp("docker_language_server"),
   ["eslint-lsp"] = T.lsp("eslint"),
   ["gh-actions-language-server"] = T.lsp("gh_actions_ls"),
+  ["html-lsp"] = "html",
   ["json-lsp"] = T.lsp("jsonls"),
   ["oxfmt"] = T.auto,
   ["oxlint"] = T.auto,
