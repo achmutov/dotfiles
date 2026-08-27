@@ -148,10 +148,6 @@ node:
         pnpm \
         serve
 
-lua:
-    luarocks install --local \
-        luacheck
-
 py:
     uv tool install -U debugpy
     uv tool install -U ty
