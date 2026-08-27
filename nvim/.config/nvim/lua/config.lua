@@ -6,18 +6,14 @@ local T = {
 
 local mason2lsp = {
   -- npm
-  ["bash-language-server"] = T.lsp("bashls"),
+  ["bash-language-server"] = T.lsp("bashls"), -- needs shellcheck, shfmt
   ["css-lsp"] = T.lsp("cssls"),
   ["docker-compose-language-service"] = T.lsp("docker_compose_language_service"),
-  ["docker-language-server"] = T.lsp("docker_language_server"),
   ["eslint-lsp"] = T.lsp("eslint"),
   ["gh-actions-language-server"] = T.lsp("gh_actions_ls"),
   ["html-lsp"] = "html",
   ["json-lsp"] = T.lsp("jsonls"),
-  ["oxfmt"] = T.auto,
-  ["oxlint"] = T.auto,
   ["tailwindcss-language-server"] = T.lsp("tailwindcss"),
-  ["tsgo"] = T.auto,
   ["vue-language-server"] = T.lsp("vue_ls"),
   ["yaml-language-server"] = T.lsp("yamlls"),
 
@@ -25,21 +21,24 @@ local mason2lsp = {
   ["clangd"] = T.auto,
   ["codelldb"] = T.none,
   ["shellcheck"] = T.none,
-  ["shfmt"] = T.none,
 }
 -- ["lua-language-server"] = "lua_ls",
 -- ["pyright"] = SAME,
 -- ["typescript-language-server"] = "ts_ls",
 
 local system_lsp = {
+  "docker_language_server",
   "emmylua_ls",
   "gopls",
   "just",
   "neocmake",
+  "oxfmt",
+  "oxlint",
   "ruff",
   "rust_analyzer",
   "stylua",
   "taplo",
+  "tsc",
   "ty",
   "typos_lsp",
   "zls",

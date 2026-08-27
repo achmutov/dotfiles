@@ -117,11 +117,30 @@ rust-misc-utils:
 _rust PACKAGE:
     cargo install --locked {{ PACKAGE }}
 
+rust-js:
+    cargo install                                \
+        --git https://github.com/oxc-project/oxc \
+        --tag apps_v1.80.0                       \
+        --locked                                 \
+        --features allocator                     \
+        oxlint
+
+    cargo install                                \
+        --git https://github.com/oxc-project/oxc \
+        --tag apps_v1.80.0                       \
+        --locked                                 \
+        --no-default-features                    \
+        --features allocator                     \
+        oxfmt
+
 go:
     #!/usr/bin/env sh
     go install github.com/boyter/scc/v4@latest
     go install github.com/karol-broda/snitch@latest
     go install golang.org/x/tools/gopls@latest
+    go install mvdan.cc/sh/v3/cmd/shfmt@latest
+    go install -x -a github.com/microsoft/TypeScript/tsc/cmd/tsc@e95d8e57a89f
+    go install github.com/docker/docker-language-server/cmd/docker-language-server@latest
     command -v ttyd 2>&1 >/dev/null && go install github.com/charmbracelet/vhs@latest
 
 node:
