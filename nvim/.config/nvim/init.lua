@@ -220,7 +220,9 @@ local function autocommands()
           tier = 2,
         },
       }
-      vim.tbl_extend("error", parsers, custom_parsers)
+      for k, v in pairs(custom_parsers) do
+        parsers[k] = v
+      end
     end,
   })
 
