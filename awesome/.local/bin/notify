@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+pactl suspend-sink "$(pactl get-default-sink)" false
+
 awesome-client "
   naughty = require('naughty')
   naughty.notification({
