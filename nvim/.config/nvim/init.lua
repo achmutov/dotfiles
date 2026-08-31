@@ -310,8 +310,8 @@ local function plugins()
       init = function()
         ---@diagnostic disable-next-line: unnecessary-if
         if colorscheme_transparent then
-          vim.g.zenwritten = { transparent_background = 1 }
-          vim.g.kanagawabones = { transparent_background = 1 }
+          vim.g.zenwritten = { transparent_background = 1, italic_strings = false }
+          vim.g.kanagawabones = { transparent_background = 1, italic_strings = false }
         else
           vim.g.zenwritten_compat = 1
           vim.g.kanagawabones_compat = 1
