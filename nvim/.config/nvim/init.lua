@@ -681,7 +681,6 @@ local function plugins()
 
   ---@type LazySpec_
   local git = {
-    "tpope/vim-fugitive",
     {
       "ruifm/gitlinker.nvim",
       keys = { { "<leader>gy", mode = { "n", "v" } } },
