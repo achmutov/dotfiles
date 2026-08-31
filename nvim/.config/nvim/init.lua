@@ -147,6 +147,7 @@ local custom_ft_to_native = {
   ["yaml.docker-compose"] = "yaml",
   ["yaml.github"] = "yaml",
 }
+local custom_treesitter_grammars = { "resc" }
 
 local function autocommands()
   vim.api.nvim_create_autocmd("BufEnter", {
@@ -184,7 +185,7 @@ local function autocommands()
         return
       end
       local name = custom_ft_to_native[ev.match] or ev.match
-      if require("nvim-treesitter.parsers")[name] then
+      if require("nvim-treesitter.parsers")[name] or vim.list_contains(custom_treesitter_grammars, name) then
         require("nvim-treesitter").install(name)
         pcall(vim.treesitter.start)
       end
