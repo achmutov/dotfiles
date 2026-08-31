@@ -1,6 +1,4 @@
 set selection-clipboard clipboard
-set recolor true
 set incremental-search true
-set recolor-darkcolor "#dcdccc"
-set highlight-color "rgba(255, 255, 255, 0.5)"
-set recolor-lightcolor "#282828"
+set guioptions "h"  # fix horizontal scrolling
+include "./themes/gruvbox/zathurarc"
