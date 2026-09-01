@@ -1,9 +1,5 @@
 # ~/.zshrc
 
-case $- in
-    *i*) ;;
-      *) return;;
-esac
 export EDITOR=nvim
 
 ###########
