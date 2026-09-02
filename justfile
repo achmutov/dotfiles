@@ -120,14 +120,14 @@ _rust PACKAGE:
 rust-js:
     cargo install                                \
         --git https://github.com/oxc-project/oxc \
-        --tag apps_v1.80.0                       \
+        --tag apps_v1.81.0                       \
         --locked                                 \
         --features allocator                     \
         oxlint
 
     cargo install                                \
         --git https://github.com/oxc-project/oxc \
-        --tag apps_v1.80.0                       \
+        --tag apps_v1.81.0                       \
         --locked                                 \
         --no-default-features                    \
         --features allocator                     \
