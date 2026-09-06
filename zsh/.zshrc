@@ -1,183 +1,171 @@
 # ~/.zshrc
 
 export EDITOR=nvim
+export BROWSER=helium-desktop
 
 ###########
 #   Zsh   #
 ###########
 
-HISTCONTROL=ignoredups
+# parameters
 HISTFILE=~/.zsh_history
-setopt appendhistory
-setopt share_history
-unsetopt beep
-HISTSIZE=1000
-SAVEHIST=2000
+HISTSIZE=20000
+# shellcheck disable=SC2034
+SAVEHIST=10000
+FPATH="${HOME}/.zfunc:${FPATH}"
 
-zstyle ':completion:::*:default' menu no select
+# options
+setopt AUTO_CD
+setopt NO_AUTO_MENU # no cycling
+setopt COMPLETE_IN_WORD
+setopt NO_LIST_AMBIGUOUS # show list even on unambiguous prefix completion
+setopt INC_APPEND_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt NO_BEEP
+setopt EMACS
 
-FPATH="$HOME/.zfunc:${FPATH}"
+# zle
+autoload -Uz compinit && compinit
 
-autoload -Uz compinit
-compinit
+autoload edit-command-line &&
+  zle -N edit-command-line &&
+  bindkey "^X^e" edit-command-line
 
-set -o emacs
-autoload edit-command-line
-zle -N edit-command-line
-bindkey '^X^e' edit-command-line
+cmp-to-clip() { xclip -sel c <<<"$BUFFER"; } &&
+  zle -N cmp-to-clip &&
+  bindkey "^Y" cmp-to-clip
 
-cmp-to-clip() { xclip -sel c <<< "$BUFFER" }
-zle -N cmp-to-clip
-bindkey '^Y' cmp-to-clip
-
-bindkey '^U' backward-kill-line
-
-###########
-# Plugins #
-###########
-
-# FZF
-if command -v fzf 2>&1 >/dev/null; then
-    export FZF_CTRL_R_OPTS="
-      --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
-      --color header:italic
-      --header 'Press CTRL-Y to copy command into clipboard'"
-    source <(fzf --zsh)
-fi
-eval "$(starship init zsh)"
-eval "$(direnv hook zsh)"
+bindkey "^U" backward-kill-line
 
 #############
 # Functions #
 #############
 
-cheat() { curl cheat.sh/$1 }
-weather() { curl wttr.in/$1 }
-weather2() { curl v2.wttr.in/$1 }
+cheat() { curl "cheat.sh/$1"; }
+weather() { curl "wttr.in/$1"; }
+weather2() { curl "v2.wttr.in/$1"; }
+
+dev_dir=~/dev
+workspace_dir="${dev_dir}/_workspaces"
+self_handle=achmutov
 
 wk() {
-    BASE_DIRECTORY="$HOME/dev/_workspaces/"
-    DIR=$(fd --base-directory "$BASE_DIRECTORY" -d 1 -H | fzf)
-    [ "$DIR" = "" ] || cd "$BASE_DIRECTORY/$DIR"
+  local base_directory="$workspace_dir"
+  local dir
+  dir=$(fd --base-directory "$base_directory" -d 1 -H | fzf)
+  [ "$dir" = "" ] || cd -- "${base_directory}/${dir}" || return
 }
-dwk() { cd "$HOME/dev/_workspaces"}
+dwk() { cd -- "$workspace_dir" || return; }
 
 dev() {
-    BASE_DIRECTORY="$HOME/dev/"
-    DIR=$(fd --base-directory "$BASE_DIRECTORY" "(\.git)$" -d 3 -H   \
-        | awk '!/^_workspaces/ { sub(/\/\.git\/$/, "", $0); print }' \
-        | fzf                                                        \
-    )
-    [ "$DIR" = "" ] || cd "$BASE_DIRECTORY/$DIR"
+  local base_directory="$dev_dir"
+  local dir
+  dir=$(
+    fd --base-directory "$base_directory" "(\.git)$" -d 3 -HI -t d |
+      awk '!/^_workspaces/ { sub(/\/\.git\/$/, "", $0); print }' |
+      fzf
+  )
+  [ "$dir" = "" ] || cd -- "${base_directory}/${dir}" || return
 }
-ddev() { cd "$HOME/dev/" }
+ddev() { cd -- "$dev_dir" || return; }
 
 deva() {
-    BASE_DIRECTORY="$HOME/dev/achmutov/"
-    DIR=$(fd --base-directory "$BASE_DIRECTORY" -d 1 -H | fzf)
-    [ "$DIR" = "" ] || cd "$BASE_DIRECTORY/$DIR"
+  local base_directory="${dev_dir}/${self_handle}"
+  local dir
+  dir=$(fd --base-directory "$base_directory" -d 1 -HI -t d | fzf)
+  [ "$dir" = "" ] || cd -- "${base_directory}/${dir}" || return
 }
-ddeva() { cd "$HOME/dev/achmutov/" }
+ddeva() { cd -- "${dev_dir}/${self_handle}" || return; }
 
 y() {
-    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-    yazi "$@" --cwd-file="$tmp"
-    if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        builtin cd -- "$cwd"
-    fi
-    rm -f -- "$tmp"
+  local tmp cwd
+  tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+  command yazi "$@" --cwd-file="$tmp"
+  IFS= read -r -d "" cwd <"$tmp"
+  [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd" || return
+  command rm -f -- "$tmp"
 }
-
 
 ###########
 #  Other  #
 ###########
 
-WINIT_X11_SCALE_FACTOR=1
-
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-has_path() {
-    local paths="$1"
-    local path="$2"
-    [[ ":$paths:" == *":$dir:"* ]]
+_add_to_path() {
+  local dir="$1"
+  [ -d "$dir" ] && [[ ":$PATH:" != *":$dir:"* ]] && PATH="${dir}:${PATH}"
 }
 
-add_to_path() {
-    local dir="$1"
-    [ -d "$dir" ]            \
-    && ! has_path $PATH $dir \
-    && PATH="$dir:$PATH"
-}
-
-add_to_ld_library_path() {
-    local dir="$1"
-    [ -d "$dir" ]                              \
-    && ! has_path $LD_LIBRARY_PATH $dir        \
-    && LD_LIBRARY_PATH="$dir:$LD_LIBRARY_PATH"
-}
-
-source_if_exists() {
-    local file="$1"
-    [ -s "$file" ] && source "$file"
+_source_if_exists() {
+  local file="$1"
+  [ -s "$file" ] && source "$file"
 }
 
 # zsh
-source_if_exists    "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
-source              "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-source_if_exists    "$HOME/.zsh_aliases"
+_source_if_exists ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+_source_if_exists ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # general
-add_to_path            "$HOME/bin"
-add_to_path            "$HOME/.local/bin"
-add_to_ld_library_path "$HOME/.local/lib"
+_add_to_path ~/bin
+_add_to_path ~/.local/bin
 
 # python
-export NTLK_DATA="$HOME/.local/state/ntlk_data"
+export NTLK_DATA=~/.local/state/ntlk_data
 
 # lua
-add_to_path "$HOME/.luarocks/bin"
+_add_to_path ~/.luarocks/bin
 
 # rust
-export RUSTUP_TOOLCHAIN=stable
-add_to_path      "$HOME/.cargo/bin"
-source_if_exists "$HOME/.cargo/env"
+_add_to_path ~/.cargo/bin
+_source_if_exists ~/.cargo/env
 
 # go
-export GOPATH="$HOME/.go"
-add_to_path "$GOPATH/bin"
+export GOPATH=~/.go
+_add_to_path "${GOPATH}/bin"
+_add_to_path "/usr/local/go/bin"
 
 # js
-export PNPM_HOME="$HOME/.local/share/pnpm"
-add_to_path $PNPM_HOME
-
-# nvm
-# export NVM_DIR="$HOME/.nvm"
-# load_nvm () {
-#     unset -f npm node nvm
-#     source_if_exists "$NVM_DIR/nvm.sh"
-#     source_if_exists "$NVM_DIR/bash_completion"
-# }
-# nvm () {
-#     load_nvm
-#     nvm $@
-# }
-# npm () {
-#     load_nvm
-#     npm $@
-# }
-# node () {
-#     load_nvm
-#     node $@
-# }
-
-# fnm
-[ -x "$(command -v fnm)" ] && eval "$(fnm env --use-on-cd --shell zsh)"
+export PNPM_HOME=~/.local/share/pnpm
+_add_to_path "${PNPM_HOME}/bin"
 
 # zephyr
-export ZEPHYR_SDK_INSTALL_DIR="$HOME/.local"
+export ZEPHYR_SDK_INSTALL_DIR=~/.local/state/zephyr
 
-# nvim
-if [ -x "$(command -v nvim)" ]; then
-    export MANPAGER='nvim +Man!'
+unset -f _add_to_path _source_if_exists
+
+###########
+# Plugins #
+###########
+
+_c_exists() {
+  command -v "$1" >/dev/null
+}
+
+_c_exists starship &&
+  eval "$(starship init zsh)"
+
+_c_exists fzf &&
+  source <(fzf --zsh)
+
+_c_exists direnv &&
+  eval "$(direnv hook zsh)"
+
+_c_exists fnm &&
+  eval "$(fnm env --use-on-cd --shell zsh)"
+
+_c_exists nvim &&
+  export MANPAGER="nvim +Man!"
+
+# Aliases
+alias nv="nvim"
+alias j="just"
+alias grep="grep --color=auto"
+if _c_exists eza; then
+  alias ls="eza"
+  alias l="eza -al -F=auto"
+else
+  alias ls="ls --color=auto"
+  alias l="ls -alF"
 fi
+alias fastfetch="fastfetch -c examples/25.jsonc --structure-disabled colors --pipe"
+
+unset -f _c_exists
