@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+dummy-session() {
+  local n="$1"
+  tmux new          \
+    -d              \
+    -s "${n}-dummy" \
+    -c ~
+}
+
+for i in {0..9}; do
+  dummy-session "$i"
+done
+
+if [ "$TERM_PROGRAM" != "tmux" ]; then
+  tmux attach
+fi
