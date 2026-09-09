@@ -361,10 +361,15 @@ local function plugins()
 
   ---@type LazySpec_
   local core = {
-    "Pocco81/auto-save.nvim",
+    {
+      "Pocco81/auto-save.nvim",
+      -- https://github.com/Pocco81/auto-save.nvim/blob/979b6c82f60cfa80f4cf437d77446d0ded0addf0/lua/auto-save/config.lua#L11
+      event = { "InsertLeave", "TextChanged" },
+    },
     {
       "kylechui/nvim-surround",
       version = "^4.0.0",
+      event = "VeryLazy",
     },
     {
       "windwp/nvim-autopairs",
@@ -812,6 +817,7 @@ local function plugins()
     {
       "saghen/blink.cmp",
       version = "1.*",
+      event = "VeryLazy",
       dependencies = {
         "rafamadriz/friendly-snippets",
         "xzbdmw/colorful-menu.nvim",
@@ -892,6 +898,7 @@ local function plugins()
     {
       "L3MON4D3/LuaSnip",
       build = "make install_jsregexp",
+      lazy = true,
     },
   }
 
