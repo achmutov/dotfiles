@@ -7,6 +7,15 @@ export BROWSER=helium-desktop
 #   Zsh   #
 ###########
 
+_source_if_exists() {
+  local file="$1"
+  # shellcheck disable=SC1090
+  [ -s "$file" ] && source "$file"
+}
+
+_source_if_exists ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+_source_if_exists ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
 # parameters
 HISTFILE=~/.zsh_history
 HISTSIZE=20000
@@ -34,6 +43,19 @@ autoload edit-command-line &&
 cmp-to-clip() { xclip -sel c <<<"$BUFFER"; } &&
   zle -N cmp-to-clip &&
   bindkey "^Y" cmp-to-clip
+
+backward-kill-path() { WORDCHARS=${WORDCHARS//\//} zle backward-kill-word; } &&
+  zle -N backward-kill-path &&
+  bindkey "^[w" backward-kill-path
+
+forward-path() { WORDCHARS=${WORDCHARS//\//} zle .forward-word; } &&
+  ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-path) &&
+  zle -N forward-path &&
+  bindkey "^[e" forward-path
+
+backward-path() { WORDCHARS=${WORDCHARS//\//} zle .backward-word; } &&
+  zle -N backward-path &&
+  bindkey "^[g" backward-path
 
 bindkey "^U" backward-kill-line
 
@@ -94,15 +116,6 @@ _add_to_path() {
   local dir="$1"
   [ -d "$dir" ] && [[ ":$PATH:" != *":$dir:"* ]] && PATH="${dir}:${PATH}"
 }
-
-_source_if_exists() {
-  local file="$1"
-  [ -s "$file" ] && source "$file"
-}
-
-# zsh
-_source_if_exists ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-_source_if_exists ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # general
 _add_to_path ~/bin
