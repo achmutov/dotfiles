@@ -1,8 +1,5 @@
 # ~/.zshrc
 
-export EDITOR=nvim
-export BROWSER=helium-desktop
-
 ###########
 #   Zsh   #
 ###########
@@ -156,6 +153,7 @@ _c_exists() {
 _c_exists starship &&
   eval "$(starship init zsh)"
 
+# shellcheck disable=SC1090
 _c_exists fzf &&
   source <(fzf --zsh)
 
@@ -166,7 +164,15 @@ _c_exists fnm &&
   eval "$(fnm env --use-on-cd --shell zsh)"
 
 _c_exists nvim &&
+  export EDITOR=nvim &&
   export MANPAGER="nvim +Man!"
+
+_c_exists moor &&
+  export SYSTEMD_PAGERSECURE=1 &&
+  export PAGER="moor --terminal-fg"
+
+_c_exists helium-desktop &&
+  export BROWSER=helium-desktop
 
 # Aliases
 alias nv="nvim"
