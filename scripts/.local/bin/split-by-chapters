@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if (($# < 1)); then
+  echo "usage: $0 <file> [directory]" >&2
+  echo "Splits single media file by FFMPEG chapters and stores them in a directory" >&2
+  exit 1
+fi
+
+input="$1"
+base="${2:-${input%.*}}"
+
+mkdir -- "$base"
+
+i=0
+while IFS=$'\t' read -r start end chapter; do
+  chapter=${chapter:-chapter-$i}
+  chapter=${chapter#"${chapter%%[![:space:]]*}"}
+  chapter=${chapter%"${chapter##*[![:space:]]}"}
+  chapter=${chapter//\//-}
+
+  ffmpeg \
+    -nostdin \
+    -ss "$start" \
+    -to "$end" \
+    -i "$input" \
+    -c copy \
+    -map 0 \
+    -map_chapters -1 \
+    "${base}/${i}-${chapter}.${input##*.}"
+  i=$((i + 1))
+done < <(
+  ffprobe \
+    -show_entries 'chapter=start_time,end_time:chapter_tags=title' \
+    -print_format json \
+    "$input" |
+    jq -r '.chapters[] | [.start_time, .end_time, .tags.title] | @tsv'
+)
