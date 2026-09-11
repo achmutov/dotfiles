@@ -110,6 +110,7 @@ rust-dev-editor:
 
 rust-misc-utils:
     cargo install --locked \
+        cyme               \
         du-dust            \
         emlop              \
         trippy
