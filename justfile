@@ -133,15 +133,22 @@ rust-js:
         --features allocator                     \
         oxfmt
 
-go:
-    #!/usr/bin/env sh
+go: go-misc-utils go-dev-editor-tools go-dev-editor
+
+go-misc-utils:
+    go install github.com/walles/moor/v2/cmd/moor@latest
     go install github.com/boyter/scc/v4@latest
     go install github.com/karol-broda/snitch@latest
-    go install golang.org/x/tools/gopls@latest
+    go install github.com/charmbracelet/vhs@latest # ttyd required
+
+go-dev-editor-tools:
     go install mvdan.cc/sh/v3/cmd/shfmt@latest
+    go install github.com/go-delve/delve/cmd/dlv@latest
+
+go-dev-editor:
+    go install golang.org/x/tools/gopls@latest
     go install -x -a github.com/microsoft/TypeScript/tsc/cmd/tsc@e95d8e57a89f
     go install github.com/docker/docker-language-server/cmd/docker-language-server@latest
-    command -v ttyd 2>&1 >/dev/null && go install github.com/charmbracelet/vhs@latest
 
 node:
     npm i -g \
