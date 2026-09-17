@@ -93,7 +93,6 @@ rust-dev-utils:
 
 rust-dev-pm:
     cargo install --locked \
-        bob-nvim           \
         fnm                \
         uv
 
