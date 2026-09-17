@@ -970,8 +970,11 @@ local function plugins()
       "folke/lazydev.nvim",
       opts = {
         library = {
-          { path = "luvit-meta/library", words = { "vim%.uv" } },
+          { path = "/usr/share/awesome/lib", files = { "rc.lua" } },
         },
+        enabled = function()
+          return vim.fs.root(0, { ".lazydev-marker" })
+        end,
       },
       ft = "lua",
     },
