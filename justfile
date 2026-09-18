@@ -8,6 +8,7 @@ stow:
         perfconfig \
         picom      \
         scripts    \
+        starship   \
         stylua     \
         tmux       \
         trippy     \

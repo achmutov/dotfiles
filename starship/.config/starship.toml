@@ -1,0 +1,11 @@
+[character]
+success_symbol = "[\\$](purple)"
+error_symbol = "[\\$](red)"
+
+[git_branch]
+# without 'on' prefix
+format = '[$symbol$branch(:$remote_branch)]($style) '
+
+[hostname]
+ssh_symbol = '☢  '
+style = 'bold dimmed cyan'
