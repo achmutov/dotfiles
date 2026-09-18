@@ -3,6 +3,7 @@ stow:
         X11        \
         alacritty  \
         awesome    \
+        git        \
         mpv        \
         nvim       \
         perfconfig \
