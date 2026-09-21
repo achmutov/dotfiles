@@ -77,8 +77,8 @@ local function core_keymaps()
   vim.keymap.set("n", "<M-n>", ":cnext<CR>")
   vim.keymap.set("n", "<M-p>", ":cprev<CR>")
 
-  vim.keymap.set("n", "<M-b>", "<C-y>")
-  vim.keymap.set("n", "<M-f>", "<C-E>")
+  vim.keymap.set("n", "<M-K>", "<C-y>")
+  vim.keymap.set("n", "<M-J>", "<C-e>")
 
   vim.keymap.set("v", "<leader>y", '"+y')
   vim.keymap.set("x", "<leader>p", '"_dP')
@@ -698,6 +698,7 @@ local function plugins()
       keys = {
         { "<leader>gv", ":CodeDiff " },
         { "<leader>gc", "<cmd>CodeDiff<cr>" },
+        { "<leader>gf", "<cmd>CodeDiff file @^<cr>" },
       },
       cmd = "CodeDiff",
       opts = {
