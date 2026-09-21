@@ -1,5 +1,5 @@
 -- additional externals:
--- * pactl
+-- * wpctl
 -- * scrot
 -- * xbacklight
 -- * xclip
@@ -127,7 +127,7 @@ local function setup_screens()
   screen.connect_signal("request::desktop_decoration", function(s)
     local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
     local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
-    local volume_widget = require("awesome-wm-widgets.pactl-widget.volume")
+    local volume_widget = require("awesome-wm-widgets.wpctl-widget.volume")
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
     s.mypromptbox = awful.widget.prompt()
     awful.wibar({
@@ -469,15 +469,15 @@ local function setup_global_bindings()
   local volume = {
     {
       { {}, "XF86AudioLowerVolume" },
-      wrap(awful.spawn.with_shell, "pactl -- set-sink-volume @DEFAULT_SINK@ -10%"),
+      wrap(awful.spawn.with_shell, "wpctl set-volume @DEFAULT_SINK@ 10%-"),
     },
     {
       { {}, "XF86AudioRaiseVolume" },
-      wrap(awful.spawn.with_shell, "pactl -- set-sink-volume @DEFAULT_SINK@ +10%"),
+      wrap(awful.spawn.with_shell, "wpctl set-volume @DEFAULT_SINK@ 10%+"),
     },
     {
       { {}, "XF86AudioMute" },
-      wrap(awful.spawn.with_shell, "pactl set-sink-mute @DEFAULT_SINK@ toggle"),
+      wrap(awful.spawn.with_shell, "wpctl set-mute @DEFAULT_SINK@ toggle"),
     },
   }
   map_append(volume)
