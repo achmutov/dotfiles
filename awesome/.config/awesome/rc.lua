@@ -9,11 +9,14 @@ local terminal_cmd = "alacritty"
 local lock_screen_cmd = "xsecurelock"
 local browser_cmd = "gtk-launch helium"
 local compositor_cmd = "picom"
+---@type string?
+local power_supply = "BAT0"
 
 local awful = require("awful")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
 local wibox = require("wibox")
+local gears = require("gears")
 
 local modkey = "Mod4"
 
@@ -125,7 +128,55 @@ local function setup_screens()
     })
   end)
   screen.connect_signal("request::desktop_decoration", function(s)
-    local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
+    local battery_widget
+
+    if power_supply then
+      ---@param widget table
+      ---@param stdout string
+      ---@param _ any
+      ---@param _ any
+      ---@param exitcode number
+      local function update_battery_widget(widget, stdout, _, _, exitcode)
+        local function bat_format(value)
+          return " | bat " .. value .. " | "
+        end
+
+        if exitcode ~= 0 then
+          widget:set_text(bat_format("missing battery " .. power_supply))
+          return
+        end
+
+        local capacity_prefix = "POWER_SUPPLY_CAPACITY="
+        local capacity_line = stdout:match(capacity_prefix .. "%d+")
+        if not capacity_line then
+          widget:set_text(bat_format("failed to get capacity"))
+          return
+        end
+        local capacity = capacity_line:sub(#capacity_prefix + 1)
+
+        local status_prefix = "POWER_SUPPLY_STATUS="
+        local status_line = stdout:match(status_prefix .. "[^\n]+")
+        if not status_line then
+          widget:set_text(bat_format("failed to get status"))
+          return
+        end
+
+        local status_str = status_line:sub(#status_prefix + 1)
+        local status = ""
+        if status_str == "Charging" then
+          status = " "
+        elseif status_str == "Not charging" then
+          status = "  "
+        elseif status_str == "Discharging" then
+          status = "↓"
+        end
+
+        widget:set_text(bat_format(capacity .. "%" .. status))
+      end
+      battery_widget =
+        awful.widget.watch("cat /sys/class/power_supply/" .. power_supply .. "/uevent", 10, update_battery_widget)
+    end
+
     local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
     local volume_widget = require("awesome-wm-widgets.wpctl-widget.volume")
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
@@ -151,7 +202,7 @@ local function setup_screens()
           layout = wibox.layout.fixed.horizontal,
           volume_widget({ widget_type = "arc" }),
           brightness_widget({ program = "xbacklight", timeout = 1 }),
-          batteryarc_widget(),
+          battery_widget,
           wibox.widget.systray(),
           awful.widget.keyboardlayout(),
           wibox.widget.textclock("| %a %F | %H:%M "),
@@ -215,10 +266,11 @@ local map_bindings = function(mappings, mapping_type)
   else
     awful_fun = awful.key
   end
-  return require("gears.table").map(function(mapping)
+  return gears.table.map(function(mapping)
     ---@cast mapping Mapping
     local trigger, callback = unpack(mapping)
     local modifiers, button = unpack(trigger)
+    ---@diagnostic disable-next-line: call-non-callable
     return awful_fun(modifiers, button, callback)
   end, mappings)
 end
@@ -509,7 +561,7 @@ local function setup_global_bindings()
   ---@param scrot_type "selection"|"window"|"all"
   local scrot_new = function(scrot_type)
     local dir = (os.getenv("XDG_PICTURES_DIR") or os.getenv("HOME") .. "/Pictures") .. "/scrot"
-    require("gears.filesystem").make_directories(dir)
+    gears.filesystem.make_directories(dir)
 
     local path = dir .. "/" .. os.date("%Y-%m-%d_%H-%M-%S") .. "_scrot.png"
     local flag = ""
