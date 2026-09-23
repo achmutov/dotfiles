@@ -9,3 +9,5 @@ globals:
     any: true
   tag:
     any: true
+  refresh_battery_widget:
+    any: true

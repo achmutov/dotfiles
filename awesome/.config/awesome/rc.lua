@@ -137,6 +137,7 @@ end
 
 local refresh_volume_widget = function() end
 local refresh_brightness_widget = function() end
+refresh_battery_widget = function() end
 
 local function setup_screens()
   screen.connect_signal("request::wallpaper", function(s)
@@ -269,8 +270,12 @@ local function setup_screens()
 
         widget:set_text(bat_format(capacity .. "%" .. status))
       end
-      battery_widget =
+      local battery_timer
+      battery_widget, battery_timer =
         awful.widget.watch("cat /sys/class/power_supply/" .. power_supply .. "/uevent", 10, update_battery_widget)
+      refresh_battery_widget = function()
+        battery_timer:emit_signal("timeout")
+      end
     end
 
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
