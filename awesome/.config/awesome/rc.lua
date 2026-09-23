@@ -4,6 +4,7 @@
 -- * xbacklight
 -- * xclip
 -- * xdg-open
+-- * tesseract
 
 local terminal_cmd = "alacritty"
 local lock_screen_cmd = "xsecurelock"
@@ -609,37 +610,52 @@ local function setup_global_bindings()
   }
   map_append(utils)
 
-  ---@param scrot_type "selection"|"window"|"all"
+  ---@param scrot_type "selection"|"window"|"all"|"ocr"
   local scrot_new = function(scrot_type)
-    local dir = (os.getenv("XDG_PICTURES_DIR") or os.getenv("HOME") .. "/Pictures") .. "/scrot"
-    gears.filesystem.make_directories(dir)
-
-    local path = dir .. "/" .. os.date("%Y-%m-%d_%H-%M-%S") .. "_scrot.png"
-    local flag = ""
-    if scrot_type == "selection" then
-      flag = "-s"
-    end
-    if scrot_type == "window" then
-      flag = "-u"
-    end
-
-    awful.spawn.easy_async(
-      -- Avoid file descriptor inheritance by redirecting stdout and stderr
-      string.format("scrot -e 'xclip -sel c -t image/png < $f >/dev/null 2>&1' --line mode=edge %q %s", path, flag),
-      function()
-        naughty
-          .notification({
-            message = "",
-            icon = path,
-            icon_size = 300,
-          })
-          :connect_signal("destroyed", function(_, reason)
-            if reason == 2 then
-              awful.spawn.with_shell("xdg-open '" .. path .. "'")
-            end
-          end)
+    if scrot_type ~= "ocr" then
+      local flag = ""
+      if scrot_type == "selection" then
+        flag = "-s"
       end
-    )
+      if scrot_type == "window" then
+        flag = "-u"
+      end
+
+      local dir = (os.getenv("XDG_PICTURES_DIR") or os.getenv("HOME") .. "/Pictures") .. "/scrot"
+      gears.filesystem.make_directories(dir)
+      local path = dir .. "/" .. os.date("%Y-%m-%d_%H-%M-%S") .. "_scrot.png"
+
+      awful.spawn.easy_async(
+        -- Avoid file descriptor inheritance by redirecting stdout and stderr
+        string.format("scrot -e 'xclip -sel c -t image/png < $f >/dev/null 2>&1' --line mode=edge %q %s", path, flag),
+        function()
+          naughty
+            .notification({
+              message = "",
+              icon = path,
+              icon_size = 300,
+            })
+            :connect_signal("destroyed", function(_, reason)
+              if reason == 2 then
+                awful.spawn.spawn(string.format("xdg-open %q", path))
+              end
+            end)
+        end
+      )
+    else
+      local path = "/tmp/scrot_ocr_" .. os.date("%Y-%m-%d_%H-%M-%S") .. ".png"
+
+      awful.spawn.easy_async(
+        -- Avoid file descriptor inheritance by redirecting stdout and stderr
+        string.format(
+          "scrot -e 'tesseract $f stdout 2>/dev/null | xclip -sel c >/dev/null 2>&1' --line mode=edge %q -s",
+          path
+        ),
+        function()
+          naughty.notification({ message = "OCR performed, text copied" })
+        end
+      )
+    end
   end
 
   local screenshots = {
@@ -654,6 +670,10 @@ local function setup_global_bindings()
     {
       { { modkey }, "F3" },
       wrap(scrot_new, "all"),
+    },
+    {
+      { { modkey }, "F4" },
+      wrap(scrot_new, "ocr"),
     },
   }
   map_append(screenshots)
