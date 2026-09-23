@@ -10,6 +10,8 @@ local lock_screen_cmd = "xsecurelock"
 local browser_cmd = "gtk-launch helium"
 local compositor_cmd = "picom"
 ---@type string?
+local backlight = "acpi_video0"
+---@type string?
 local power_supply = "BAT0"
 
 local awful = require("awful")
@@ -128,8 +130,35 @@ local function setup_screens()
     })
   end)
   screen.connect_signal("request::desktop_decoration", function(s)
-    local battery_widget
+    local brightness_widget
+    if backlight then
+      ---@param widget table
+      ---@param stdout string
+      ---@param _ any
+      ---@param _ any
+      ---@param exitcode number
+      local function update_brightness_widget(widget, stdout, _, _, exitcode)
+        local function brightness_format(value)
+          return " | ● " .. value .. " | "
+        end
 
+        if exitcode ~= 0 then
+          widget:set_text(brightness_format("missing " .. backlight))
+          return
+        end
+
+        local brightness = stdout:gsub("%s+$", "")
+
+        widget:set_text(brightness_format(brightness .. "%"))
+      end
+      brightness_widget = awful.widget.watch(
+        "cat /sys/class/backlight/" .. backlight .. "/actual_brightness",
+        1,
+        update_brightness_widget
+      )
+    end
+
+    local battery_widget
     if power_supply then
       ---@param widget table
       ---@param stdout string
@@ -138,7 +167,7 @@ local function setup_screens()
       ---@param exitcode number
       local function update_battery_widget(widget, stdout, _, _, exitcode)
         local function bat_format(value)
-          return " | bat " .. value .. " | "
+          return "bat " .. value .. " | "
         end
 
         if exitcode ~= 0 then
@@ -177,7 +206,6 @@ local function setup_screens()
         awful.widget.watch("cat /sys/class/power_supply/" .. power_supply .. "/uevent", 10, update_battery_widget)
     end
 
-    local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
     local volume_widget = require("awesome-wm-widgets.wpctl-widget.volume")
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
     s.mypromptbox = awful.widget.prompt()
@@ -201,7 +229,7 @@ local function setup_screens()
         {
           layout = wibox.layout.fixed.horizontal,
           volume_widget({ widget_type = "arc" }),
-          brightness_widget({ program = "xbacklight", timeout = 1 }),
+          brightness_widget,
           battery_widget,
           wibox.widget.systray(),
           awful.widget.keyboardlayout(),
