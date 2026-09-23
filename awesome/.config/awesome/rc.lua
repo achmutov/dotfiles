@@ -1,7 +1,6 @@
 -- additional externals:
 -- * wpctl
 -- * scrot
--- * xbacklight
 -- * xclip
 -- * xdg-open
 -- * tesseract
@@ -629,14 +628,35 @@ local function setup_global_bindings()
   }
   map_append(volume)
 
+  local function change_cmd(step)
+    return string.format(
+      [[
+        dir=%s
+        step=%d
+        read -r brightness <"$dir/brightness"
+        read -r max_brightness <"$dir/max_brightness"
+        value=$((brightness + step * max_brightness / 100))
+        clamped=$((
+          value < 1
+            ? 1
+            : value > max_brightness
+              ? max_brightness
+              : value
+        ))
+        printf "%%s" "$clamped" >"$dir/brightness"
+      ]],
+      "/sys/class/backlight/" .. backlight,
+      step
+    )
+  end
   local brightness = {
     {
       { {}, "XF86MonBrightnessDown" },
-      wrap(awful.spawn.easy_async, "xbacklight -dec 10", refresh_brightness_widget),
+      wrap(awful.spawn.easy_async_with_shell, change_cmd(-10), refresh_brightness_widget),
     },
     {
       { {}, "XF86MonBrightnessUp" },
-      wrap(awful.spawn.easy_async, "xbacklight -inc 10", refresh_brightness_widget),
+      wrap(awful.spawn.easy_async_with_shell, change_cmd(10), refresh_brightness_widget),
     },
   }
   map_append(brightness)
