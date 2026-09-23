@@ -130,6 +130,30 @@ local function setup_screens()
     })
   end)
   screen.connect_signal("request::desktop_decoration", function(s)
+    local function update_volume_widget(widget, stdout)
+      ---@param value string
+      ---@param icon string?
+      ---@return string
+      local function volume_format(value, icon)
+        return " | " .. (icon or " ") .. " " .. tostring(value) .. " | "
+      end
+
+      local trimmed = stdout:gsub("%s+$", ""):sub(#"Volume: " + 1)
+      local volume_value = tonumber(stdout:match("[%d.]+"))
+      if volume_value == nil then
+        widget:set_text(volume_format("failed to parse volume"))
+        return
+      end
+      local volume_percent = tostring(math.floor(volume_value * 100)) .. "%"
+
+      if trimmed:find("MUTED") == nil then
+        widget:set_text(volume_format(volume_percent, " "))
+      else
+        widget:set_text(volume_format(volume_percent))
+      end
+    end
+    local volume_widget = awful.widget.watch("wpctl get-volume @DEFAULT_SINK@", 1, update_volume_widget)
+
     local brightness_widget
     if backlight then
       ---@param widget table
@@ -139,7 +163,7 @@ local function setup_screens()
       ---@param exitcode number
       local function update_brightness_widget(widget, stdout, _, _, exitcode)
         local function brightness_format(value)
-          return " | ● " .. value .. " | "
+          return "● " .. value .. " | "
         end
 
         if exitcode ~= 0 then
@@ -206,7 +230,6 @@ local function setup_screens()
         awful.widget.watch("cat /sys/class/power_supply/" .. power_supply .. "/uevent", 10, update_battery_widget)
     end
 
-    local volume_widget = require("awesome-wm-widgets.wpctl-widget.volume")
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
     s.mypromptbox = awful.widget.prompt()
     awful.wibar({
@@ -228,7 +251,7 @@ local function setup_screens()
         }),
         {
           layout = wibox.layout.fixed.horizontal,
-          volume_widget({ widget_type = "arc" }),
+          volume_widget,
           brightness_widget,
           battery_widget,
           wibox.widget.systray(),
