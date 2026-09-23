@@ -202,13 +202,22 @@ local function setup_screens()
           return
         end
 
-        local brightness = stdout:gsub("%s+$", "")
-
-        widget:set_text(brightness_format(brightness .. "%"))
+        local brightness_str, max_brightness_str = stdout:match("(%d+)\n(%d+)")
+        local brightness = tonumber(brightness_str)
+        local max_brightness = tonumber(max_brightness_str)
+        if brightness == nil or max_brightness == nil then
+          widget:set_text(brightness_format("failed to parse brightness"))
+        else
+          widget:set_text(brightness_format(tostring(brightness / max_brightness * 100) .. "%"))
+        end
       end
       local brightness_timer
       brightness_widget, brightness_timer = awful.widget.watch(
-        "cat /sys/class/backlight/" .. backlight .. "/actual_brightness",
+        string.format(
+          "cat /sys/class/backlight/%s/actual_brightness /sys/class/backlight/%s/max_brightness",
+          backlight,
+          backlight
+        ),
         10,
         update_brightness_widget
       )
