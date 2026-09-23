@@ -549,11 +549,11 @@ local function setup_global_bindings()
   local volume = {
     {
       { {}, "XF86AudioLowerVolume" },
-      wrap(awful.spawn.with_shell, "wpctl set-volume @DEFAULT_SINK@ 10%-"),
+      wrap(awful.spawn.with_shell, "wpctl set-volume -l 1.0 @DEFAULT_SINK@ 10%-"),
     },
     {
       { {}, "XF86AudioRaiseVolume" },
-      wrap(awful.spawn.with_shell, "wpctl set-volume @DEFAULT_SINK@ 10%+"),
+      wrap(awful.spawn.with_shell, "wpctl set-volume -l 1.0 @DEFAULT_SINK@ 10%+"),
     },
     {
       { {}, "XF86AudioMute" },
