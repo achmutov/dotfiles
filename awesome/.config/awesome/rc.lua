@@ -635,11 +635,11 @@ local function setup_global_bindings()
   local utils = {
     {
       { { modkey }, "b" },
-      wrap(awful.spawn.with_shell, browser_cmd),
+      wrap(awful.spawn.spawn, browser_cmd),
     },
     {
       { { modkey, "Ctrl" }, "l" },
-      wrap(awful.spawn.with_shell, lock_screen_cmd),
+      wrap(awful.spawn.spawn, lock_screen_cmd),
     },
   }
   map_append(utils)
@@ -714,4 +714,4 @@ local function setup_global_bindings()
 end
 setup_global_bindings()
 
-awful.spawn.with_shell(compositor_cmd)
+awful.spawn.spawn(compositor_cmd)
