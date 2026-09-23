@@ -402,7 +402,7 @@ local function setup_client_bindings()
         end,
       },
       {
-        { { modkey, "Control" }, "space" },
+        { { modkey, "Ctrl" }, "space" },
         awful.client.floating.toggle,
       },
       {
@@ -431,7 +431,7 @@ local function setup_client_bindings()
         end,
       },
       {
-        { { modkey, "Control" }, "m" },
+        { { modkey, "Ctrl" }, "m" },
         function(c)
           c.maximized_vertical = not c.maximized_vertical
           c:raise()
@@ -454,7 +454,7 @@ local function setup_global_bindings()
       wrap(awful.spawn.spawn, terminal_cmd),
     },
     {
-      { { modkey, "Control" }, "r" },
+      { { modkey, "Ctrl" }, "r" },
       awesome.restart,
     },
     {
@@ -501,7 +501,7 @@ local function setup_global_bindings()
       end,
     }),
     awful.key({
-      modifiers = { modkey, "Control" },
+      modifiers = { modkey, "Ctrl" },
       keygroup = "numrow",
       on_press = function(index)
         local screen = awful.screen.focused()
@@ -524,7 +524,7 @@ local function setup_global_bindings()
       end,
     }),
     awful.key({
-      modifiers = { modkey, "Control", "Shift" },
+      modifiers = { modkey, "Ctrl", "Shift" },
       keygroup = "numrow",
       on_press = function(index)
         if client.focus then
@@ -540,11 +540,11 @@ local function setup_global_bindings()
 
   local screen_navigation = {
     {
-      { { modkey, "Control" }, "j" },
+      { { modkey, "Ctrl" }, "j" },
       wrap(awful.screen.focus_relative, 1),
     },
     {
-      { { modkey, "Control" }, "k" },
+      { { modkey, "Ctrl" }, "k" },
       wrap(awful.screen.focus_relative, -1),
     },
   }
@@ -584,7 +584,7 @@ local function setup_global_bindings()
       wrap(awful.layout.inc, -1),
     },
     {
-      { { modkey, "Control" }, "n" },
+      { { modkey, "Ctrl" }, "n" },
       function()
         local c = awful.client.restore()
         -- Focus restored client
