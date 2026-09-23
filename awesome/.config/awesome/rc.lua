@@ -509,7 +509,7 @@ local function setup_global_bindings()
   ---@param scrot_type "selection"|"window"|"all"
   local scrot_new = function(scrot_type)
     local dir = (os.getenv("XDG_PICTURES_DIR") or os.getenv("HOME") .. "/Pictures") .. "/scrot"
-    awful.spawn.with_shell('mkdir -p "' .. dir .. '"')
+    require("gears.filesystem").make_directories(dir)
 
     local path = dir .. "/" .. os.date("%Y-%m-%d_%H-%M-%S") .. "_scrot.png"
     local flag = ""
