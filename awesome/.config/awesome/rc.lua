@@ -112,6 +112,33 @@ local function setup_layouts()
 end
 setup_layouts()
 
+---@param func fun()
+---@param timeout number?
+---@return fun()
+local function throttle(func, timeout)
+  timeout = timeout or 0.1
+
+  -- keep this timer around
+  local timer
+  _ = timer
+  local ready = true
+
+  return function()
+    if ready then
+      ready = false
+      func()
+
+      timer = gears.timer.start_new(timeout, function()
+        ready = true
+        return false
+      end)
+    end
+  end
+end
+
+local refresh_volume_widget = function() end
+local refresh_brightness_widget = function() end
+
 local function setup_screens()
   screen.connect_signal("request::wallpaper", function(s)
     awful.wallpaper({
@@ -153,7 +180,10 @@ local function setup_screens()
         widget:set_text(volume_format(volume_percent))
       end
     end
-    local volume_widget = awful.widget.watch("wpctl get-volume @DEFAULT_SINK@", 1, update_volume_widget)
+    local volume_widget, volume_timer = awful.widget.watch("wpctl get-volume @DEFAULT_SINK@", 10, update_volume_widget)
+    refresh_volume_widget = throttle(function()
+      volume_timer:emit_signal("timeout")
+    end)
 
     local brightness_widget
     if backlight then
@@ -176,11 +206,15 @@ local function setup_screens()
 
         widget:set_text(brightness_format(brightness .. "%"))
       end
-      brightness_widget = awful.widget.watch(
+      local brightness_timer
+      brightness_widget, brightness_timer = awful.widget.watch(
         "cat /sys/class/backlight/" .. backlight .. "/actual_brightness",
-        1,
+        10,
         update_brightness_widget
       )
+      refresh_brightness_widget = throttle(function()
+        brightness_timer:emit_signal("timeout")
+      end)
     end
 
     local battery_widget
@@ -573,15 +607,15 @@ local function setup_global_bindings()
   local volume = {
     {
       { {}, "XF86AudioLowerVolume" },
-      wrap(awful.spawn.with_shell, "wpctl set-volume -l 1.0 @DEFAULT_SINK@ 10%-"),
+      wrap(awful.spawn.easy_async, "wpctl set-volume -l 1.0 @DEFAULT_SINK@ 10%-", refresh_volume_widget),
     },
     {
       { {}, "XF86AudioRaiseVolume" },
-      wrap(awful.spawn.with_shell, "wpctl set-volume -l 1.0 @DEFAULT_SINK@ 10%+"),
+      wrap(awful.spawn.easy_async, "wpctl set-volume -l 1.0 @DEFAULT_SINK@ 10%+", refresh_volume_widget),
     },
     {
       { {}, "XF86AudioMute" },
-      wrap(awful.spawn.with_shell, "wpctl set-mute @DEFAULT_SINK@ toggle"),
+      wrap(awful.spawn.easy_async, "wpctl set-mute @DEFAULT_SINK@ toggle", refresh_volume_widget),
     },
   }
   map_append(volume)
@@ -589,11 +623,11 @@ local function setup_global_bindings()
   local brightness = {
     {
       { {}, "XF86MonBrightnessDown" },
-      wrap(awful.util.spawn, "xbacklight -dec 10"),
+      wrap(awful.spawn.easy_async, "xbacklight -dec 10", refresh_brightness_widget),
     },
     {
       { {}, "XF86MonBrightnessUp" },
-      wrap(awful.util.spawn, "xbacklight -inc 10"),
+      wrap(awful.spawn.easy_async, "xbacklight -inc 10", refresh_brightness_widget),
     },
   }
   map_append(brightness)
