@@ -722,7 +722,7 @@ local function plugins()
       keys = {
         { "<leader>gv", ":CodeDiff " },
         { "<leader>gc", "<cmd>CodeDiff<cr>" },
-        { "<leader>gf", "<cmd>CodeDiff file @^<cr>" },
+        { "<leader>gf", "<cmd>CodeDiff file @<cr>" },
       },
       cmd = "CodeDiff",
       opts = {
