@@ -1,5 +1,8 @@
 PREFERRED_FORMATTER = {}
 
+---@type boolean
+local syntax = true
+
 local function lazy_setup()
   local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
   if not vim.uv.fs_stat(lazypath) then
@@ -35,6 +38,9 @@ local function core_opts()
   -- numbers
   vim.o.nu = true
   vim.o.rnu = true
+  if not syntax then
+    vim.cmd.syn("off")
+  end
 
   -- appearance
   vim.o.gcr = ""
@@ -149,6 +155,10 @@ local custom_ft_to_native = {
 }
 local custom_treesitter_grammars = { "resc" }
 
+if not syntax then
+  vim.treesitter.start = function() end
+end
+
 local function autocommands()
   vim.api.nvim_create_autocmd("BufEnter", {
     callback = function()
@@ -180,6 +190,10 @@ local function autocommands()
 
   vim.api.nvim_create_autocmd("FileType", {
     callback = function(ev)
+      if not syntax then
+        vim.treesitter.stop()
+        return
+      end
       local result = vim.uv.fs_stat(ev.file)
       if result == nil or result.size > 1000 * 1024 then
         return
@@ -200,6 +214,13 @@ local function autocommands()
       vim.keymap.set("n", "<leader>e", vim.lsp.buf.rename, opts)
       vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
       vim.keymap.set("n", "<leader>c", vim.lsp.buf.code_action, opts)
+
+      if not syntax then
+        local client = vim.lsp.get_client_by_id(event.data.client_id)
+        if client and client.server_capabilities then
+          client.server_capabilities.semanticTokensProvider = nil
+        end
+      end
     end,
   })
   --
@@ -466,6 +487,9 @@ local function plugins()
           })
         end
         require("telescope").load_extension("fzf")
+        if not syntax then
+          require("telescope.previewers.utils").highlighter = function(_, _, _) end
+        end
 
         local builtin = require("telescope.builtin")
 
@@ -720,7 +744,7 @@ local function plugins()
       config = function()
         local neogit = require("neogit")
         neogit.setup({
-          treesitter_diff_highlight = true,
+          treesitter_diff_highlight = syntax,
           disable_hint = true,
           disable_context_highlighting = true,
           graph_style = "unicode",
