@@ -89,6 +89,10 @@ local function core_keymaps()
   vim.keymap.set("v", "<leader>y", '"+y')
   vim.keymap.set("x", "<leader>p", '"_dP')
 
+  vim.keymap.set("n", "<leader>I", function()
+    require("utils").toggleTree()
+  end)
+
   local so = vim.o.so
   vim.keymap.set("n", "<leader>sc", function()
     require("utils").toggleScrolloff(so)

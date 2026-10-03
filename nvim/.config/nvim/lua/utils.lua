@@ -172,4 +172,24 @@ function M.shlex(cmd)
   vim.print("Shlexed to clipboard:\n" .. formatted)
 end
 
+function M.toggleTree()
+  local buf = vim.api.nvim_win_get_buf(0)
+
+  -- has attached tree
+  local win_dev_inspect = vim.b[buf].dev_inspect
+  if win_dev_inspect and vim.api.nvim_win_is_valid(win_dev_inspect) then
+    vim.api.nvim_win_close(win_dev_inspect, true)
+    return
+  end
+
+  -- in tree
+  local win_dev_base = vim.b[buf].dev_base
+  if win_dev_base and vim.api.nvim_win_is_valid(win_dev_base) then
+    vim.cmd.wincmd("c")
+    return
+  end
+
+  vim.cmd.InspectTree()
+end
+
 return M
