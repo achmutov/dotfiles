@@ -82,6 +82,8 @@ local function core_keymaps()
 
   vim.keymap.set("n", "<M-n>", ":cnext<CR>")
   vim.keymap.set("n", "<M-p>", ":cprev<CR>")
+  vim.keymap.set("n", "<M-N>", ":lnext<CR>")
+  vim.keymap.set("n", "<M-P>", ":lprev<CR>")
 
   vim.keymap.set("n", "<M-K>", "<C-y>")
   vim.keymap.set("n", "<M-J>", "<C-e>")
