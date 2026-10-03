@@ -1,0 +1,4 @@
+[icon]
+append_dirs = [
+    { name = "src", text = "󰆧"}
+]
