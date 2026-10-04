@@ -1,4 +1,5 @@
 stow:
+    mkdir -p ~/.local/share/nvim/lsp-npm
     stow -t ~      \
         X11        \
         alacritty  \
@@ -157,6 +158,23 @@ node:
     npm i -g \
         pnpm \
         serve
+
+lspnpm := x'${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lsp-npm/'
+
+node-nvim-ci:
+    cd "{{ lspnpm }}" && npm ci
+
+node-nvim-i:
+    cd "{{ lspnpm }}" && npm i
+
+node-nvim-clean:
+    cd "{{ lspnpm }}" && truncate -s 0 package-lock.json && rm -rf node_modules
+
+node-nvim-out:
+    cd "{{ lspnpm }}" && npm outdated
+
+node-nvim-exe *flags:
+    cd "{{ lspnpm }}" && npm {{ flags }}
 
 py:
     uv tool install -U debugpy

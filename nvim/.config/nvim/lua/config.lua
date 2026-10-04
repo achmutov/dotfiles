@@ -5,18 +5,6 @@ local T = {
 }
 
 local mason2lsp = {
-  -- npm
-  ["bash-language-server"] = T.lsp("bashls"), -- needs shellcheck, shfmt
-  ["css-lsp"] = T.lsp("cssls"),
-  ["docker-compose-language-service"] = T.lsp("docker_compose_language_service"),
-  ["eslint-lsp"] = T.lsp("eslint"),
-  ["gh-actions-language-server"] = T.lsp("gh_actions_ls"),
-  ["html-lsp"] = "html",
-  ["json-lsp"] = T.lsp("jsonls"),
-  ["tailwindcss-language-server"] = T.lsp("tailwindcss"),
-  ["vue-language-server"] = T.lsp("vue_ls"),
-  ["yaml-language-server"] = T.lsp("yamlls"),
-
   -- github
   ["clangd"] = T.auto,
   ["codelldb"] = T.none,
@@ -27,8 +15,11 @@ local mason2lsp = {
 -- ["typescript-language-server"] = "ts_ls",
 
 local system_lsp = {
+  "bashls", -- needs shellcheck, shfmt
+  "cssls",
   "docker_language_server",
   "emmylua_ls",
+  "gh_actions_ls",
   "gopls",
   "just",
   "neocmake",
@@ -37,12 +28,21 @@ local system_lsp = {
   "ruff",
   "rust_analyzer",
   "stylua",
+  "tailwindcss",
   "taplo",
   "ts_query_ls",
   "tsc",
   "ty",
   "typos_lsp",
   "zls",
+
+  -- TODO: better installation
+  -- Mason pulls these from unmaintained hrsh7th/vscode-langservers-extracted
+  -- There's T1ckbase/vscode-langservers-extracted, but it isn't used by many
+  "cssls",
+  "eslint",
+  "html",
+  "jsonls",
 }
 
 local mason = vim.tbl_keys(mason2lsp)

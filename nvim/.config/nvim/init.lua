@@ -949,6 +949,7 @@ local function plugins()
       "neovim/nvim-lspconfig",
       event = "VeryLazy",
       config = function()
+        vim.env.PATH = vim.env.PATH .. ":" .. (vim.fn.stdpath("data") .. "/lsp-npm/node_modules/.bin")
         vim.env.PATH = vim.env.PATH .. ":" .. (vim.fn.stdpath("data") .. "/mason/bin")
         vim.lsp.enable(require("config").lsp)
       end,
