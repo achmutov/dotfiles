@@ -107,6 +107,7 @@ rust-dev-editor:
         selene             \
         stylua             \
         taplo-cli          \
+        ts_query_ls        \
         typos-lsp
 
 rust-misc-utils:

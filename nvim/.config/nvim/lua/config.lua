@@ -38,6 +38,7 @@ local system_lsp = {
   "rust_analyzer",
   "stylua",
   "taplo",
+  "ts_query_ls",
   "tsc",
   "ty",
   "typos_lsp",
