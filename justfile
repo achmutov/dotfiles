@@ -14,6 +14,7 @@ stow:
         stylua     \
         tmux       \
         trippy     \
+        vim        \
         yazi       \
         zathura    \
         zsh

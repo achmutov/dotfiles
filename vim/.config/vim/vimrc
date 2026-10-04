@@ -1,0 +1,4 @@
+if !empty($XDG_STATE_HOME)
+    call mkdir($XDG_STATE_HOME . "/vim", "p")
+    set viminfofile=$XDG_STATE_HOME/vim/.viminfo
+endif
