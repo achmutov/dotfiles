@@ -6,6 +6,7 @@ stow:
         awesome    \
         git        \
         mpv        \
+        npm        \
         nvim       \
         perfconfig \
         picom      \

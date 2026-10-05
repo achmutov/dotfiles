@@ -1,0 +1,24 @@
+allow-scripts = ""
+allow-scripts-pin = true
+strict-allow-scripts = true
+
+allow-git = none
+allow-remote = none
+
+min-release-age = 1
+
+allow-file = root
+allow-directory = root
+
+strict-npmrc = true
+
+strict-ssl = true
+
+package-lock = true
+
+audit = true
+audit-level = high
+
+cache = ${XDG_CACHE_HOME}/npm
+init-module=${XDG_CONFIG_HOME}/npm/init.js
+logs-dir=${XDG_STATE_HOME}/npm/logs
