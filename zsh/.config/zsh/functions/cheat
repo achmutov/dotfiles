@@ -1,0 +1,3 @@
+curl "cheat.sh/$1"
+
+# vim: ft=zsh

@@ -1,0 +1,7 @@
+[colors]
+    root = white,default
+
+[buildid]
+    dir = ~/.local/state/perf
+
+# vim: ft=gitconfig

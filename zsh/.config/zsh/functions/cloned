@@ -1,0 +1,15 @@
+# git path
+git_path=$(_git-path-from-args "$@") || return
+
+# clone
+clone_dir="${HOSTS_DIR}/${git_path}"
+git clone --bare "$@" "$clone_dir" || return
+
+# worktree
+repo_wt_dir="${WT_DIR}/${git_path}"
+default_branch=$(git -C "$clone_dir" symbolic-ref --short HEAD) || return
+git -C "$clone_dir" worktree add "$repo_wt_dir" "$default_branch" || return
+
+cd -- "$repo_wt_dir" || return
+
+# vim: ft=zsh

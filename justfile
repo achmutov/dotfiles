@@ -4,6 +4,7 @@ stow:
         X11        \
         alacritty  \
         awesome    \
+        eix        \
         git        \
         mpv        \
         npm        \
@@ -27,9 +28,8 @@ clean: tmux-clean zsh-clean
 clone-or-pull REPO DIR:
     #!/usr/bin/env sh
     if [ -d "{{ DIR }}" ]; then
-        pushd {{ DIR }}
-        git pull
-        popd
+        printf "Synchronizing %s\n" "{{ REPO }}"
+        git -C {{ DIR }} pull
     else
         git clone {{ REPO }} {{ DIR }}
     fi
@@ -65,11 +65,13 @@ tmux-clean:
 #######
 
 zsh:
-    just clone-or-pull "https://github.com/zsh-users/zsh-autosuggestions" "$HOME/.zsh/zsh-autosuggestions"
-    just clone-or-pull "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$HOME/.zsh/zsh-syntax-highlighting"
+    #!/usr/bin/env bash
+    : ${ZSH_PLUGIN_DIR:=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins}
+    just clone-or-pull "https://github.com/zsh-users/zsh-autosuggestions" "$ZSH_PLUGIN_DIR/zsh-autosuggestions"
+    just clone-or-pull "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting"
 
 zsh-clean:
-    rm -rf "~/.zsh"
+    rm -rf "${ZSH_PLUGIN_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins}"
 
 ########
 # PKGS #
