@@ -150,7 +150,7 @@ vim.filetype.add({
   pattern = {
     ["docker-compose%.ya?ml"] = "yaml.docker-compose",
     [".*%.resc"] = "resc",
-    -- [".*%.repl"] = "repl",
+    [".*%.lox"] = "lox",
     ["compose%.ya?ml"] = "yaml.docker-compose",
     [".*/%.github[%w/]+workflows[%w/]+.*%.ya?ml"] = "yaml.github",
   },
@@ -159,7 +159,7 @@ local custom_ft_to_native = {
   ["yaml.docker-compose"] = "yaml",
   ["yaml.github"] = "yaml",
 }
-local custom_treesitter_grammars = { "resc" }
+local custom_treesitter_grammars = { "resc", "lox" }
 
 if not syntax then
   vim.treesitter.start = function() end
@@ -233,23 +233,9 @@ local function autocommands()
   vim.api.nvim_create_autocmd("User", {
     pattern = "TSUpdate",
     callback = function()
-      local parsers = require("nvim-treesitter.parsers")
-      ---@type nvim-ts.parsers
-      local custom_parsers = {
-        resc = {
-          install_info = {
-            url = "https://github.com/achmutov/tree-sitter-resc",
-            revision = "c7a7a3f2716c0dbe305cbde566406faa279f7402",
-            generate_from_json = false,
-            path = "/home/doc/dev/achmutov/tree-sitter-resc",
-            generate = true,
-            queries = "queries",
-          },
-          tier = 2,
-        },
-      }
-      for k, v in pairs(custom_parsers) do
-        parsers[k] = v
+      local nvim_ts_parsers = require("nvim-treesitter.parsers")
+      for k, v in pairs(require("achmutov.parsers")) do
+        nvim_ts_parsers[k] = v
       end
     end,
   })
