@@ -128,18 +128,10 @@ _rust PACKAGE:
 rust-js:
     cargo install                                \
         --git https://github.com/oxc-project/oxc \
-        --tag apps_v1.81.0                       \
+        --tag oxlint_v1.87.0                     \
         --locked                                 \
         --features allocator                     \
         oxlint
-
-    cargo install                                \
-        --git https://github.com/oxc-project/oxc \
-        --tag apps_v1.81.0                       \
-        --locked                                 \
-        --no-default-features                    \
-        --features allocator                     \
-        oxfmt
 
 go: go-misc-utils go-dev-editor-tools go-dev-editor
 

@@ -2,17 +2,16 @@
   "name": "@lsp-npm/core",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "keywords": [],
   "type": "commonjs",
+  "main": "index.js",
   "devDependencies": {
     "@actions/languageserver": "0.3.61",
     "@tailwindcss/language-server": "0.16.0",
     "bash-language-server": "5.8.1",
+    "oxfmt": "0.72.0",
+    "vscode-css-languageservice": "6.3.10",
     "vscode-langservers-extracted": "4.10.0",
     "yaml-language-server": "1.24.0"
-  },
-  "dependencies": {
-    "vscode-css-languageservice": "6.3.10"
   }
 }
