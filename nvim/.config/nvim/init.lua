@@ -962,6 +962,8 @@ local function plugins()
         outline_items = { show_symbol_lineno = true },
         symbols = { icon_source = "lspkind" },
         keymaps = { close = {} },
+        --- default + vimdoc
+        providers = { priority = { "lsp", "coc", "markdown", "norg", "man", "vimdoc" } },
       },
     },
   }
