@@ -14,6 +14,7 @@ stow:
         scripts    \
         starship   \
         stylua     \
+        texinfo    \
         tmux       \
         trippy     \
         vim        \
