@@ -9,6 +9,9 @@ git clone --bare "$@" "$clone_dir" || return
 repo_wt_dir="${WT_DIR}/${git_path}"
 default_branch=$(git -C "$clone_dir" symbolic-ref --short HEAD) || return
 git -C "$clone_dir" worktree add "$repo_wt_dir" "$default_branch" || return
+git -C "$clone_dir" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+git -C "$clone_dir" fetch origin "$default_branch" || return
+git -C "$repo_wt_dir" branch --set-upstream-to="origin/$default_branch" || return
 
 cd -- "$repo_wt_dir" || return
 
