@@ -64,10 +64,10 @@ fn run(source_window: &str, tmux_bolt_pane: &str) -> Result<(), AppError> {
         .and_then(|_| tmux_driver::switch_to_window_by_pane(tmux_bolt_pane).map_err(AppError::Tmux))
         .and_then(|_| crossterm::event::read().map_err(AppError::Io))
         .inspect_err(|_| {
-            _ = tmux_driver::unfreeze_panes(panes.iter().map(|pane| &pane.base), "");
+            _ = tmux_driver::unfreeze_panes(panes.iter().map(|pane| &pane.base), None);
         })?;
 
-    tmux_driver::unfreeze_panes(panes.iter().map(|pane| &pane.base), "")?;
+    tmux_driver::unfreeze_panes(panes.iter().map(|pane| &pane.base), None)?;
 
     Ok(())
 }

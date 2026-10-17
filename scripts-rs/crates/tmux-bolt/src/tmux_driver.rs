@@ -120,7 +120,8 @@ pub fn freeze_and_capture_panes(
     };
 
     let mut panes_out = Vec::with_capacity(panes.len());
-    for pane in &panes {
+    let mut panes_iter = panes.into_iter();
+    while let Some(pane) = panes_iter.next() {
         let mut current_cmd = first_cmd.take().unwrap_or(cmd());
         let navigable = match pane.mode {
             types::PaneMode::Seekable { scroll } => {
@@ -144,15 +145,26 @@ pub fn freeze_and_capture_panes(
                 false
             }
         };
-        let output = exec(&mut current_cmd, "capture panes").inspect_err(|_| {
-            _ = unfreeze_panes(panes.iter(), "");
-        })?;
-        panes_out.push(types::Pane {
-            // TODO: remove redundant allocation
-            base: pane.clone(),
-            content: String::from_utf8_lossy(&output.stdout).into(),
-            navigable,
-        });
+        match exec(&mut current_cmd, "capture panes") {
+            Ok(output) => {
+                panes_out.push(types::Pane {
+                    base: pane,
+                    content: String::from_utf8_lossy(&output.stdout).into(),
+                    navigable,
+                });
+            }
+            Err(err) => {
+                _ = unfreeze_panes(
+                    panes_out
+                        .into_iter()
+                        .map(|p| p.base)
+                        .chain(std::iter::once(pane))
+                        .chain(panes_iter),
+                    None,
+                );
+                return Err(err);
+            }
+        };
     }
 
     Ok(panes_out)
@@ -179,24 +191,24 @@ pub fn switch_to_window_by_pane(pane: &str) -> Result<(), types::TmuxError> {
 }
 
 // maybe unfreezing should ignore when pane is not found?
-pub fn unfreeze_panes<'a>(
-    panes: impl Iterator<Item = &'a types::PaneBase>,
-    chosen_pane_id: &str,
+pub fn unfreeze_panes(
+    panes: impl Iterator<Item = impl std::borrow::Borrow<types::PaneBase>>,
+    chosen_pane_id: Option<&str>,
 ) -> Result<(), types::TmuxError> {
     let mut current_cmd = cmd();
     let mut has_commands = false;
-    panes
-        // Don't change the chosen pane
-        .filter(|pane| pane.id != chosen_pane_id)
-        // Change only those without modes prior
-        .filter(|pane| matches!(pane.mode, types::PaneMode::Empty))
-        .for_each(|pane| {
+    for pane in panes {
+        let pane = pane.borrow();
+        if chosen_pane_id.is_none_or(|pane_id| pane.id != pane_id)
+            && matches!(pane.mode, types::PaneMode::Empty)
+        {
             if has_commands {
                 current_cmd.arg(";");
             }
             current_cmd.args(["send-keys", "-X", "-t", &pane.id, "cancel"]);
             has_commands = true;
-        });
+        }
+    }
 
     if !has_commands {
         return Ok(());
