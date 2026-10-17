@@ -1120,5 +1120,9 @@ local function user_commands()
   vim.api.nvim_create_user_command("Shlex", function(opts)
     require("utils").shlex_cmd(opts)
   end, { nargs = "*", range = true })
+
+  vim.api.nvim_create_user_command("CustomInfo", function(...)
+    require("achmutov.custom_info").cmd(...)
+  end, { bang = true, nargs = "*" })
 end
 user_commands()

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+out=$(mktemp)
+trap 'rm -f "$out"' EXIT
+
+# M-x print-node <CR> q
+printf '\033xprint-node\rq' |
+  TERM=xterm INFO_PRINT_COMMAND=">$out" \
+    script -qfc info /dev/null >/dev/null
+
+cat "$out"
