@@ -52,6 +52,8 @@ export CODEX_HOME=${XDG_DATA_HOME}/codex
 
 export EIXRC=${XDG_CONFIG_HOME}/eix/eixrc
 
+export SQLITE_HISTORY=${XDG_STATE_HOME}/sqlite_history
+
 export TEXMFHOME=$XDG_DATA_HOME/texmf
 export TEXMFVAR=$XDG_CACHE_HOME/texlive/texmf-var
 export TEXMFCONFIG=$XDG_CONFIG_HOME/texlive/texmf-config
