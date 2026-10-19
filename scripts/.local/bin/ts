@@ -2,16 +2,39 @@
 
 dummy-session() {
   local n="$1"
-  tmux new          \
-    -d              \
-    -s "${n}-dummy" \
-    -c ~
+  if ! tmux list-sessions | grep "^${1}-" >/dev/null; then
+    tmux new          \
+      -d              \
+      -s "${n}-dummy" \
+      -c ~
+  fi
 }
 
-for i in {0..9}; do
+eval "$(__tslocal)"
+
+for i in {0..7}; do
   dummy-session "$i"
 done
 
+tmux new    \
+  -d        \
+  -s 8-dots \
+  -n dots   \
+  -c ~/dev/achmutov/dotfiles
+
+tmux new                \
+  -d                    \
+  -s 9-dash             \
+  -c ~                  \
+  -n btop \;            \
+  send-keys btop C-m \; \
+  neww                  \
+  -d                    \
+  -n mus                \
+  -c ~/Music
+
 if [ "$TERM_PROGRAM" != "tmux" ]; then
-  tmux attach
+  tmux \
+    attach -t 9-dash \; \
+    select-window -t btop
 fi
