@@ -3,7 +3,6 @@ HISTFILE=${XDG_STATE_HOME}/zsh/history
 mkdir -p "${HISTFILE:h}"
 HISTSIZE=20000
 SAVEHIST=10000
-FPATH=:${FPATH}
 fpath=("${XDG_DATA_HOME}/zsh/site-functions/" $fpath)
 
 # options

@@ -14,12 +14,12 @@ export ZSH_PLUGIN_DIR=${XDG_DATA_HOME}/zsh/plugins
 _source_if_exists "${ZSH_PLUGIN_DIR}/zsh-autosuggestions/zsh-autosuggestions.zsh"
 _source_if_exists "${ZSH_PLUGIN_DIR}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
+source "${ZDOTDIR}/options.zsh"
+source "${ZDOTDIR}/zle-setup.zsh"
+
 # autocompletion
 mkdir -p "${XDG_CACHE_HOME}/zsh"
 autoload -Uz compinit && compinit -d "${XDG_CACHE_HOME}/zsh/zcompdump"
-
-source "${ZDOTDIR}/options.zsh"
-source "${ZDOTDIR}/zle-setup.zsh"
 
 # shellcheck disable=SC2128,SC2206
 fpath=("${ZDOTDIR}/functions" $fpath)
