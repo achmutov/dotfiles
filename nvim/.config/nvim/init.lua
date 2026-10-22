@@ -424,6 +424,7 @@ local function plugins()
       },
       keys = {
         "<leader>pf",
+        "<leader>pg",
         --
         "<C-p>",
         "<leader>pw",
@@ -494,13 +495,20 @@ local function plugins()
         do
           local find_files_opts
           if vim.fn.executable("rg") == 1 then
+            local telescope_default = { "rg", "--files", "--color", "never" }
             find_files_opts = {
               hidden = true,
-              find_command = vim.list_extend(
-                { "rg", "--files", "--color", "never" }, -- telescope default
-                { "-g", "!.git" }
-              ),
+              find_command = vim.list_extend(telescope_default, { "-g", "!.git" }),
             }
+
+            vim.keymap.set(
+              "n",
+              "<leader>pg",
+              wrap(builtin.find_files, {
+                hidden = true,
+                find_command = vim.list_extend(telescope_default, { "-g", "!.git", "--no-ignore" }),
+              })
+            )
           end
           vim.keymap.set("n", "<leader>pf", wrap(builtin.find_files, find_files_opts))
         end
