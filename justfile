@@ -1,4 +1,5 @@
 stow:
+    touch ./zathura/.config/zathura/local.zathurarc
     mkdir -p ~/.local/share/nvim/lsp-npm
     stow -t ~      \
         X11        \

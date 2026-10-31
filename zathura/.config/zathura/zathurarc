@@ -2,3 +2,4 @@ set selection-clipboard clipboard
 set incremental-search true
 set guioptions "h"  # fix horizontal scrolling
 include "./themes/gruvbox/zathurarc"
+include "local.zathurarc"
