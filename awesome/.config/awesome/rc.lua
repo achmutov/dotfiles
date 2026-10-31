@@ -6,7 +6,7 @@
 -- * tesseract
 
 local terminal_cmd = "alacritty"
-local lock_screen_cmd = "xsecurelock"
+local lock_screen_cmd = "i3lock -c 000000"
 local browser_cmd = "gtk-launch helium"
 local compositor_cmd = "picom"
 ---@type string?
