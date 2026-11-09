@@ -58,6 +58,8 @@ export TEXMFHOME=$XDG_DATA_HOME/texmf
 export TEXMFVAR=$XDG_CACHE_HOME/texlive/texmf-var
 export TEXMFCONFIG=$XDG_CONFIG_HOME/texlive/texmf-config
 
+export RLWRAP_HOME=$XDG_STATE_HOME/rlwrap
+
 if command -v nvim >/dev/null; then
   export EDITOR=nvim
   export MANPAGER="nvim +Man!"
