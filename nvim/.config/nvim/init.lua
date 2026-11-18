@@ -498,7 +498,7 @@ local function plugins()
             local telescope_default = { "rg", "--files", "--color", "never" }
             find_files_opts = {
               hidden = true,
-              find_command = vim.list_extend(telescope_default, { "-g", "!.git" }),
+              find_command = vim.list_extend(vim.deepcopy(telescope_default), { "-g", "!.git" }),
             }
 
             vim.keymap.set(
@@ -506,7 +506,7 @@ local function plugins()
               "<leader>pg",
               wrap(builtin.find_files, {
                 hidden = true,
-                find_command = vim.list_extend(telescope_default, { "-g", "!.git", "--no-ignore" }),
+                find_command = vim.list_extend(vim.deepcopy(telescope_default), { "-g", "!.git", "--no-ignore" }),
               })
             )
           end
