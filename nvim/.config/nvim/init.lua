@@ -214,13 +214,6 @@ local function autocommands()
 
   vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(event)
-      local opts = { buffer = event.buf }
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-      vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, opts)
-      vim.keymap.set("n", "<leader>e", vim.lsp.buf.rename, opts)
-      vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
-      vim.keymap.set("n", "<leader>c", vim.lsp.buf.code_action, opts)
-
       if not syntax then
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         if client and client.server_capabilities then
