@@ -161,6 +161,15 @@ local function core_keymaps()
       end
     end)
   end
+
+  vim.keymap.set("n", "<leader>q", function()
+    local winid = vim.fn.getqflist({ winid = true }).winid
+    if winid == 0 then
+      vim.cmd.copen()
+    else
+      vim.cmd.cclose()
+    end
+  end)
 end
 core_keymaps()
 
