@@ -9,3 +9,11 @@ format = '[$symbol$branch(:$remote_branch)]($style) '
 [hostname]
 ssh_symbol = '☢  '
 style = 'bold dimmed cyan'
+
+[battery]
+disabled = true
+
+[env_var.CSHIM_ENV]
+variable = 'CSHIM_ENV'
+format = '[\($env_value\)]($style) '
+style = 'bold blue'

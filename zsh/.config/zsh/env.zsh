@@ -74,4 +74,6 @@ if command -v helium-desktop >/dev/null; then
   export BROWSER=helium-desktop
 fi
 
+export CSHIM_DISABLE_PROMPT=1
+
 unset -f _add_to_path
