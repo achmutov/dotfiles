@@ -96,7 +96,7 @@ local function core_keymaps()
   end)
 
   local so = vim.o.so
-  vim.keymap.set("n", "<leader>sc", function()
+  vim.keymap.set("n", "<leader>C", function()
     require("utils").toggleScrolloff(so)
   end)
   vim.keymap.set("n", "<leader>xx", ":![ -x % ] && chmod -x % || chmod +x %<CR>")
@@ -161,6 +161,11 @@ local function core_keymaps()
       end
     end)
   end
+
+  vim.keymap.set("n", "<leader>S", "<cmd>Telescope cshim all<cr>")
+  vim.keymap.set("n", "<leader>s", function()
+    require("achmutov.cshim").open_last()
+  end)
 
   vim.keymap.set("n", "<leader>q", function()
     local winid = vim.fn.getqflist({ winid = true }).winid
