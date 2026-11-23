@@ -133,13 +133,36 @@ local function core_keymaps()
   vim.keymap.set("n", "<C-b>", "<C-b>M")
 
   vim.keymap.set({ "n", "v" }, "<M-r>", ":restart<cr>")
+
+  do
+    ---@type vim.diagnostic.Opts
+    local diagnostic1 = {
+      virtual_lines = false,
+    }
+    ---@type vim.diagnostic.Opts
+    local diagnostic2 = {
+      virtual_lines = { source = "if_many" },
+    }
+
+    vim.diagnostic.config({
+      signs = false,
+      float = { source = "if_many" },
+    })
+    vim.keymap.set("n", "gK", function()
+      local old_config = vim.diagnostic.config()
+      if not old_config then
+        return
+      end
+
+      if old_config.virtual_lines then
+        vim.diagnostic.config(diagnostic1)
+      else
+        vim.diagnostic.config(diagnostic2)
+      end
+    end)
+  end
 end
 core_keymaps()
-
-vim.diagnostic.config({
-  virtual_text = { current_line = false },
-  virtual_lines = { current_line = true },
-})
 
 if vim.fn.has("nvim-0.12") == 1 then
   vim.lsp.document_color.enable(true, nil, { style = "virtual" })
@@ -338,7 +361,9 @@ local function plugins()
       main = "ibl",
       ---@module "ibl"
       ---@type ibl.config
-      opts = {},
+      opts = {
+        scope = { show_end = false },
+      },
     },
     {
       "datsfilipe/vesper.nvim",
