@@ -1,0 +1,22 @@
+{
+  "omatch": {
+    "prefix": "omatch",
+    "body": [
+        "match ${1:expr} {",
+        "    Some(${2:inner}) => ${2},",
+        "    None => ${3}",
+        "}"
+    ],
+    "description": "match option { … }"
+  },
+  "rmatch": {
+    "prefix": "rmatch",
+    "body": [
+        "match ${1:expr} {",
+        "    Ok(${2:inner}) => ${2},",
+        "    Err(${3:err}) => ${4}",
+        "}"
+    ],
+    "description": "match result { … }"
+  }
+}

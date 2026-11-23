@@ -942,6 +942,8 @@ local function plugins()
           signature = { enabled = true },
         })
         ---@diagnostic enable: missing-fields, param-type-mismatch
+
+        require("luasnip.loaders.from_vscode").lazy_load({ paths = "./snippets" })
       end,
     },
     {
