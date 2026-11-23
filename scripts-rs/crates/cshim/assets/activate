@@ -1,0 +1,30 @@
+# _SHIMS_PATH to be defined
+export _SHIMS_PATH=".shims"
+export CSHIM_ENV="cshim"
+
+_OLD_CSHIM_PATH=$PATH
+PATH=$_SHIMS_PATH:$PATH
+export PATH
+
+if [ -z "${CSHIM_DISABLE_PROMPT-}" ] ; then
+    _OLD_CSHIM_PS1="${PS1-}"
+    PS1="(cshim) ${PS1-}"
+    export PS1
+fi
+
+deactivate() {
+  if ! [ -z "${_OLD_CSHIM_PATH:+_}" ]; then
+    PATH="$_OLD_CSHIM_PATH"
+    export PATH
+    unset _OLD_CSHIM_PATH
+  fi
+
+  if ! [ -z "${_OLD_CSHIM_PS1+_}" ]; then
+    PS1="$_OLD_CSHIM_PS1"
+    export PS1
+    unset _OLD_CSHIM_PS1
+  fi
+  unset CSHIM_ENV
+}
+
+# vim: ft=sh
