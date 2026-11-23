@@ -8,7 +8,6 @@ M._index_ref = "info-full"
 M._index_cmd = { "info-full" }
 M._cmd_name = "CustomInfo"
 
-
 local function init()
   local autogroup = vim.api.nvim_create_augroup("achmutov_custom_info", {})
 
@@ -53,8 +52,6 @@ local function init()
   _enabled = true
 end
 
-local function open() end
-
 function M.set_options()
   vim.bo.swapfile = false
   vim.bo.buftype = "nofile"
@@ -94,8 +91,6 @@ function M.cmd(params)
     if #args == 0 then
       ref = M._index_ref
     else -- 1 or 2
-      local file = args[1]
-      local node 
       ref = string.format("(%s)%s", args[1], args[2] or "")
     end
     logger.info("ref created " .. ref)
